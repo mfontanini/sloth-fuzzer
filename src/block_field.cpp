@@ -1,13 +1,22 @@
 #include "block_field.h"
-#include "block_value_wrapper.h"
 
 block_field_impl::block_field_impl(size_t size) 
-: v_wrapper(value_wrapper::from_impl<block_value_wrapper_impl>(size))
+: data(size)
 {
     
 }
 
-value_wrapper &block_field_impl::value()
+void block_field_impl::set(size_t index, value_type value) 
 {
-    return v_wrapper;
+    data[index] = value;
+}
+
+auto block_field_impl::get(size_t index) const -> value_type
+{
+    return data[index];
+}
+
+size_t block_field_impl::size() const
+{
+    return data.size();
 }
