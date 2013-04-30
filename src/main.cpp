@@ -5,6 +5,8 @@
 #include "compound_field.h"
 #include "field.h"
 #include "value_filler.h"
+#include "function_nodes.h"
+#include "const_value_node.h"
 
 int main() {
     auto filler = std::make_shared<value_filler>("ASD-carlos-jaskldjaskl");
@@ -22,5 +24,11 @@ int main() {
     for(const auto &i : f)
         std::cout << i << ", ";
     std::cout << std::endl;
+    
+    std::cout << "Data: " << 
+        multiplies_function_node(
+            make_unique<plus_function_node>(make_unique<const_value_node>(15), make_unique<const_value_node>(5)),
+            make_unique<const_value_node>(2)
+        ).eval() << std::endl;
 }
 

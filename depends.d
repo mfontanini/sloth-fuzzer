@@ -31,9 +31,19 @@ include/field_impl.h:
 include/field_filler.h:
 
 include/field_impl.h:
+src/function_value_filler.o: src/function_value_filler.cpp \
+ include/function_value_filler.h include/value_node.h \
+ include/field_filler.h
+
+include/function_value_filler.h:
+
+include/value_node.h:
+
+include/field_filler.h:
 src/main.o: src/main.cpp include/block_field.h include/field_impl.h \
  include/utils.h include/compound_field.h include/field.h \
- include/field_filler.h include/field.h include/value_filler.h
+ include/field_filler.h include/field.h include/value_filler.h \
+ include/function_nodes.h include/value_node.h include/const_value_node.h
 
 include/block_field.h:
 
@@ -50,6 +60,12 @@ include/field_filler.h:
 include/field.h:
 
 include/value_filler.h:
+
+include/function_nodes.h:
+
+include/value_node.h:
+
+include/const_value_node.h:
 src/value_filler.o: src/value_filler.cpp include/value_filler.h \
  include/field_filler.h include/field.h include/utils.h \
  include/field_impl.h
