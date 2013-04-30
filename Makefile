@@ -2,9 +2,9 @@ CXX=g++
 CP=cp
 CXXFLAGS= -c -Wall -g -O2 -std=c++0x
 INCLUDE = -Iinclude
-LDFLAGS= -lpthread 
+LDFLAGS= -lpthread -lcrypto
 RM=rm
-SOURCES= $(wildcard src/*.cpp)
+SOURCES= $(wildcard src/*.cpp src/functions/*.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
 DEPS = $(SOURCES:.cpp=.d)
 

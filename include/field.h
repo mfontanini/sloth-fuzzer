@@ -4,6 +4,8 @@
 #include <type_traits>
 #include <iterator>
 #include <memory>
+#include <cstdint>
+#include <atomic>
 #include "utils.h"
 #include "field_impl.h"
 #include "field_filler.h"
@@ -16,6 +18,7 @@ class dereference_helper;
 
 class field {
 public:
+    typedef unsigned int identifier_type;
     typedef field_impl::value_type value_type;
     typedef field_impl::random_generator random_generator;
     typedef field_iterator<value_type> iterator;
@@ -38,6 +41,13 @@ public:
     void prepare(random_generator &engine);
     void fill();
     
+    void set_value(double value);
+    double get_value();
+    
+    identifier_type id() const {
+        return identifier;
+    }
+    
     dereference_helper<value_type> operator[](size_t index);
     dereference_helper<const value_type> operator[](size_t index) const;
     
@@ -50,9 +60,29 @@ public:
         return field(filler, make_unique<Impl>(std::forward<Args>(args)...));
     }
 private:
+    template<typename T>
+    struct type2type { };
+    
+    static std::atomic<identifier_type> global_id;
+    
+    double le_extract();
+    uint16_t extract(type2type<uint16_t>);
+    uint32_t extract(type2type<uint32_t>);
+    uint64_t extract(type2type<uint64_t>);
+    
+    void le_insert(double value);
+    void insert(uint16_t value);
+    void insert(uint32_t value);
+    void insert(uint64_t value);
+    
+
     unique_impl impl;
     filler_type filler;
+    identifier_type identifier;
 };
+
+// comparison functions
+bool operator<(const field &lhs, const field &rhs);
 
 template<typename ValueType>
 class dereference_helper {
