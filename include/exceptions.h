@@ -10,4 +10,11 @@ public:
     }
 };
 
+class dependency_loop_error : public std::exception {
+public:
+    const char *what() const throw() {
+        return "dependency loop error";
+    }
+};
+
 #endif // FUZZER_EXCEPTIONS_H

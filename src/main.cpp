@@ -16,15 +16,14 @@
 int main() {
     auto filler = std::make_shared<value_filler>("ASD-carlos-jaskldjaskl");
     auto impl = make_unique<compound_field_impl>();
-    impl->add_field(field::from_impl<block_field_impl>(nullptr, 5));
-    impl->add_field(field::from_impl<block_field_impl>(nullptr, 10));
-    impl->add_field(field::from_impl<block_field_impl>(nullptr, 15));
     impl->add_field(field::from_impl<block_field_impl>(
         std::make_shared<function_value_filler>(make_unique<crc32_function>(1)), 3));
+    impl->add_field(field::from_impl<block_field_impl>(
+        std::make_shared<function_value_filler>(make_unique<crc32_function>(2)), 5));
+    impl->add_field(field::from_impl<block_field_impl>(nullptr, 10));
+    impl->add_field(field::from_impl<block_field_impl>(nullptr, 15));
     std::random_device rnd;
     field f(filler, std::move(impl));
-    
-    std::cout << "----\n";
     
     topological_sorter sorter;
     for(const auto &i : sorter.topological_sort(f)) {
