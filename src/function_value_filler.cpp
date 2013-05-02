@@ -7,7 +7,7 @@ function_value_filler::function_value_filler(unique_value value)
     
 }
 
-void function_value_filler::fill(field &f)
+void function_value_filler::fill(field &f, const field_mapper &mapper)
 {
-    f.set_value(value->eval());
+    f.set_value(value->eval(mapper));
 }

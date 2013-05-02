@@ -16,11 +16,14 @@ class field_iterator;
 template<typename ValueType>
 class dereference_helper;
 
+class field_mapper;
+
 class field {
 public:
     typedef unsigned int identifier_type;
     typedef field_impl::value_type value_type;
     typedef field_impl::random_generator random_generator;
+    typedef field_impl::visitor_type visitor_type;
     typedef field_iterator<value_type> iterator;
     typedef field_iterator<const value_type> const_iterator;
     typedef std::unique_ptr<field_impl> unique_impl;
@@ -39,7 +42,9 @@ public:
     
     size_t size() const;
     void prepare(random_generator &engine);
-    void fill();
+    void fill(const field_mapper &mapper);
+    
+    void accept_visitor(const visitor_type &visitor) const;
     
     void set_value(double value);
     double get_value();

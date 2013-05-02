@@ -17,8 +17,8 @@ public:
         
     }
     
-    double eval() {
-        return (*this)(lhs->eval(), rhs->eval());
+    double eval(const field_mapper& mapper) {
+        return (*this)(lhs->eval(mapper), rhs->eval(mapper));
     }
 private:
     unique_node lhs, rhs;
@@ -36,8 +36,8 @@ public:
         
     }
     
-    double eval() {
-        return (*this)(node->eval());
+    double eval(const field_mapper& mapper) {
+        return (*this)(node->eval(mapper));
     }
 private:
     unique_node node;

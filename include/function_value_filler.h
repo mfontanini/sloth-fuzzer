@@ -11,7 +11,7 @@ public:
 
     function_value_filler(unique_value value);
 
-    void fill(field &f);
+    void fill(field &f, const field_mapper &mapper);
 private:
      unique_value value;
 };

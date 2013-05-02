@@ -9,7 +9,7 @@ value_filler::value_filler(const std::string &str)
     
 }
 
-void value_filler::fill(field &f) 
+void value_filler::fill(field &f, const field_mapper&) 
 {
     std::copy(data.begin(), data.end(), f.begin());
 }

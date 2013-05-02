@@ -17,7 +17,7 @@ public:
     
     value_filler(const std::string &str);
     
-    void fill(field &f);
+    void fill(field &f, const field_mapper&);
 private:
     std::vector<field::value_type> data;
 };

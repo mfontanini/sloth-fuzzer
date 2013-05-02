@@ -14,6 +14,7 @@ public:
     void set(size_t index, value_type value);
     value_type get(size_t index) const;
     size_t size() const;
+    void accept_visitor(const visitor_type& visitor) const;
 
     void add_field(field child);
 private:

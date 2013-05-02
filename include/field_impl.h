@@ -3,14 +3,17 @@
 
 #include <cstdint>
 #include <random>
+#include <functional>
 #include "utils.h"
 
 class value_wrapper;
+class field;
 
 class field_impl {
 public:
     typedef uint8_t value_type;
     typedef std::random_device random_generator;
+    typedef std::function<void(const field &)> visitor_type;
 
     virtual ~field_impl() = default;
     
@@ -19,6 +22,7 @@ public:
     virtual void set(size_t index, value_type value) = 0;
     virtual value_type get(size_t index) const = 0;
     virtual size_t size() const = 0;
+    virtual void accept_visitor(const visitor_type& visitor) const { };
 private:
 
 };

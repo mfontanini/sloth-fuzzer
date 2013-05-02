@@ -3,6 +3,7 @@
 #include "field_impl.h"
 #include "endianness.h"
 #include "exceptions.h"
+#include "field_mapper.h"
 
 std::atomic<field::identifier_type> field::global_id;
 
@@ -14,7 +15,7 @@ field::field(filler_type filler, unique_impl impl)
 
 field::field(const field &rhs) 
 : impl(rhs.impl ? rhs.impl->clone() : nullptr), filler(rhs.filler), 
-identifier(global_id++)
+identifier(rhs.identifier)
 {
     
 }
@@ -69,10 +70,10 @@ void field::prepare(random_generator &engine)
     impl->prepare(engine);
 }
 
-void field::fill() 
+void field::fill(const field_mapper &mapper) 
 {
     if(filler)
-        filler->fill(*this);
+        filler->fill(*this, mapper);
 }
 
 void field::set_value(double value)
@@ -170,6 +171,12 @@ void field::insert(uint64_t value)
     (*this)[5] = (value >> 40) & 0xff;
     (*this)[6] = (value >> 48) & 0xff;
     (*this)[7] = (value >> 56) & 0xff;
+}
+
+void field::accept_visitor(const visitor_type &visitor) const
+{
+    visitor(*this);
+    impl->accept_visitor(visitor);
 }
 
 bool operator<(const field &lhs, const field &rhs)

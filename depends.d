@@ -36,6 +36,19 @@ include/field_impl.h:
 include/endianness.h:
 
 include/exceptions.h:
+src/field_mapper.o: src/field_mapper.cpp include/field_mapper.h \
+ include/field.h include/utils.h include/field_impl.h \
+ include/field_filler.h
+
+include/field_mapper.h:
+
+include/field.h:
+
+include/utils.h:
+
+include/field_impl.h:
+
+include/field_filler.h:
 src/function_value_filler.o: src/function_value_filler.cpp \
  include/function_value_filler.h include/value_node.h \
  include/field_filler.h include/field.h include/utils.h \

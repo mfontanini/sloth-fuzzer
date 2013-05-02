@@ -1,17 +1,17 @@
 #ifndef FUZZER_CRC_H
 #define FUZZER_CRC_H
 
+#include "field.h"
 #include "value_node.h"
 
-class field;
 
 class crc32_function : public value_node {
 public:
-    crc32_function(field &input_field);
+    crc32_function(field::identifier_type id);
     
-    double eval();
+    double eval(const field_mapper& mapper);
 private:
-    field &input_field;
+    field::identifier_type id;
 };
 
 #endif // FUZZER_CRC_H

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "compound_field.h"
 
 compound_field_impl::compound_field_impl()
@@ -16,7 +17,7 @@ auto compound_field_impl::find_index(size_t index) const -> indexes_type::const_
     if(index < last_iterator->first)
         last_iterator = indexes.begin();
     auto iter = last_iterator;
-    while(iter != indexes.end() && iter->first < index) {
+    while(iter != indexes.end() && index >= iter->first) {
         last_iterator = iter++;
     }
     return last_iterator;
@@ -49,4 +50,13 @@ auto compound_field_impl::get(size_t index) const -> value_type
 size_t compound_field_impl::size() const
 {
     return total_size;
+}
+
+void compound_field_impl::accept_visitor(const visitor_type& visitor) const
+{
+    for_each(
+        fields.begin(),
+        fields.end(),
+        visitor
+    );
 }
