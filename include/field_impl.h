@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <random>
 #include <functional>
+#include <vector>
 #include "utils.h"
 
 class value_wrapper;
@@ -14,6 +15,8 @@ public:
     typedef uint8_t value_type;
     typedef std::random_device random_generator;
     typedef std::function<void(const field &)> visitor_type;
+    typedef unsigned int identifier_type;
+    typedef std::vector<identifier_type> dependents_type;
 
     virtual ~field_impl() = default;
     
@@ -23,6 +26,9 @@ public:
     virtual value_type get(size_t index) const = 0;
     virtual size_t size() const = 0;
     virtual void accept_visitor(const visitor_type& visitor) const { };
+    virtual dependents_type dependent_fields() const { 
+        return { };
+    };
 private:
 
 };

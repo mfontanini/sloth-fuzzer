@@ -2,6 +2,7 @@
 #define FUZZER_FUNCTION_NODES_H
 
 #include <functional>
+#include <algorithm>
 #include "value_node.h"
 
 // the Functor is probably a stateless class, so probably EBCO works here
@@ -19,6 +20,13 @@ public:
     
     double eval(const field_mapper& mapper) {
         return (*this)(lhs->eval(mapper), rhs->eval(mapper));
+    }
+    
+    dependents_type dependent_fields() const 
+    {
+        auto v1 = lhs->dependent_fields(), v2 = rhs->dependent_fields();
+        v1.insert(v1.end(), v2.begin(), v2.end());
+        return v1;
     }
 private:
     unique_node lhs, rhs;
@@ -38,6 +46,11 @@ public:
     
     double eval(const field_mapper& mapper) {
         return (*this)(node->eval(mapper));
+    }
+    
+    dependents_type dependent_fields() const 
+    {
+        return node->dependent_fields();
     }
 private:
     unique_node node;

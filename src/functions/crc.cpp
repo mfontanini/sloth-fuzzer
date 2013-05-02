@@ -3,15 +3,14 @@
 #include "field.h"
 #include "field_mapper.h"
 
-crc32_function::crc32_function(field::identifier_type id)
-: id(id)
+crc32_function::crc32_function(identifier_type id)
+: unary_field_function(id)
 {
     
 }
 
-double crc32_function::eval(const field_mapper& mapper)
+double crc32_function::apply(const field &input_field)
 {
-    const field &input_field = mapper.find_field(id);
     uint32_t crc = 0;
     static uint32_t crc_table[] = {
         0x4DBDF21C, 0x500AE278, 0x76D3D2D4, 0x6B64C2B0,

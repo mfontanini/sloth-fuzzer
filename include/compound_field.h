@@ -17,6 +17,7 @@ public:
     void accept_visitor(const visitor_type& visitor) const;
 
     void add_field(field child);
+    dependents_type dependent_fields() const;
 private:
     typedef std::vector<field> fields_type;
     typedef std::map<size_t, std::reference_wrapper<field>> indexes_type;

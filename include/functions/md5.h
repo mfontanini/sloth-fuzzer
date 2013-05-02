@@ -1,16 +1,13 @@
 #ifndef FUZZER_FUNCTION_MD5_H
 #define FUZZER_FUNCTION_MD5_H
 
-#include "field_filler.h"
-#include "field.h"
+#include "unary_field_function.h"
 
-class md5_function : public field_filler {
+class md5_function : public unary_field_filler_function {
 public:
-    md5_function(field::identifier_type id);
+    md5_function(identifier_type id);
     
-    void fill(field &f, const field_mapper& mapper);
-private:
-    field::identifier_type id;
+    void fill(const field &input_field, field &output_field);
 };
 
 #endif // FUZZER_FUNCTION_MD5_H

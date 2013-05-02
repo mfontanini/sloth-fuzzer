@@ -179,6 +179,16 @@ void field::accept_visitor(const visitor_type &visitor) const
     impl->accept_visitor(visitor);
 }
 
+auto field::dependent_fields() const -> dependents_type
+{
+    auto fields = impl->dependent_fields();
+    if(filler) {
+        auto filler_fields = filler->dependent_fields();
+        fields.insert(fields.end(), filler_fields.begin(), filler_fields.end());
+    }
+    return fields;
+}
+
 bool operator<(const field &lhs, const field &rhs)
 {
     return lhs.id() < rhs.id();

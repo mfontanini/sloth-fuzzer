@@ -60,3 +60,15 @@ void compound_field_impl::accept_visitor(const visitor_type& visitor) const
         visitor
     );
 }
+
+auto compound_field_impl::dependent_fields() const -> dependents_type
+{
+    dependents_type output;
+    transform(
+        fields.begin(),
+        fields.end(),
+        std::back_inserter(output),
+        std::mem_fn(&field::id)
+    );
+    return output;
+}

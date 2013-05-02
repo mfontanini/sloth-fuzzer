@@ -9,6 +9,9 @@
 #include "const_value_node.h"
 #include "function_value_filler.h"
 #include "field_mapper.h"
+#include "topological_sorter.h"
+#include "functions/crc.h"
+#include "function_value_filler.h"
 
 int main() {
     auto filler = std::make_shared<value_filler>("ASD-carlos-jaskldjaskl");
@@ -16,22 +19,17 @@ int main() {
     impl->add_field(field::from_impl<block_field_impl>(nullptr, 5));
     impl->add_field(field::from_impl<block_field_impl>(nullptr, 10));
     impl->add_field(field::from_impl<block_field_impl>(nullptr, 15));
-    impl->add_field(field::from_impl<block_field_impl>(nullptr, 3));
+    impl->add_field(field::from_impl<block_field_impl>(
+        std::make_shared<function_value_filler>(make_unique<crc32_function>(1)), 3));
     std::random_device rnd;
     field f(filler, std::move(impl));
-    field f2(f);
-    f.prepare(rnd);
     
-    f.accept_visitor([](const field &f) { std::cout << "a: " << f.id() << std::endl; });
-    std::cout << std::endl;
+    std::cout << "----\n";
     
-    
-    std::cout << f.size() << std::endl;
-    std::iota(f.begin(), f.end(), 0);
-    f.fill(field_mapper());
-    for(const auto &i : f)
-        std::cout << i << ", ";
-    std::cout << std::endl;
+    topological_sorter sorter;
+    for(const auto &i : sorter.topological_sort(f)) {
+        std::cout << "-" << i << std::endl;
+    }
     
     
     /*auto filler = std::make_shared<function_value_filler>(
@@ -44,5 +42,6 @@ int main() {
     f.fill();
     std::cout << f.size() << std::endl;
     std::cout << f.get_value() << std::endl;*/
+    
 }
 

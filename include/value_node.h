@@ -1,12 +1,20 @@
 #ifndef FUZZER_VALUE_NODE_H
 #define FUZZER_VALUE_NODE_H
 
+#include "field_impl.h"
+
 class field_mapper;
 
 class value_node {
 public:
-    virtual ~value_node() = default;
+    typedef field_impl::identifier_type identifier_type;
+    typedef field_impl::dependents_type dependents_type;
+
+    virtual ~value_node() noexcept = default;
     virtual double eval(const field_mapper&) = 0;
+    virtual dependents_type dependent_fields() const {
+        return { };
+    }
 };
 
 #endif // FUZZER_VALUE_NODE_H

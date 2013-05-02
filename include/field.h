@@ -6,6 +6,7 @@
 #include <memory>
 #include <cstdint>
 #include <atomic>
+#include <vector>
 #include "utils.h"
 #include "field_impl.h"
 #include "field_filler.h"
@@ -20,7 +21,7 @@ class field_mapper;
 
 class field {
 public:
-    typedef unsigned int identifier_type;
+    typedef field_impl::identifier_type identifier_type;
     typedef field_impl::value_type value_type;
     typedef field_impl::random_generator random_generator;
     typedef field_impl::visitor_type visitor_type;
@@ -28,6 +29,7 @@ public:
     typedef field_iterator<const value_type> const_iterator;
     typedef std::unique_ptr<field_impl> unique_impl;
     typedef std::shared_ptr<field_filler> filler_type;
+    typedef field_impl::dependents_type dependents_type;
 
     field(filler_type filler, unique_impl impl);
     field(const field &rhs);
@@ -48,6 +50,8 @@ public:
     
     void set_value(double value);
     double get_value();
+    
+    dependents_type dependent_fields() const;
     
     identifier_type id() const {
         return identifier;
