@@ -7,7 +7,7 @@ BISON=bison
 INCLUDE = -Iinclude
 LDFLAGS= -lpthread -lcrypto
 RM=rm
-SOURCES= $(wildcard src/*.cpp src/functions/*.cpp src/parser/*cpp) 
+SOURCES= $(wildcard src/*.cpp src/functions/*.cpp) src/parser/syntax_parser.cpp
 OBJECTS=$(SOURCES:.cpp=.o) src/parser/grammar.o src/parser/syntax.o
 DEPS = $(SOURCES:.cpp=.d)
 
@@ -39,13 +39,13 @@ $(EXECUTABLE): $(OBJECTS)
 .cpp.o:
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $< -o $@
 
-src/parser/grammar.o:
+src/parser/grammar.o: parser/grammar.y parser/syntax.lex include/parser/nodes.h
 	bison -d -o parser/grammar-output parser/grammar.y
 	$(MV) parser/grammar-output src/parser/grammar.cpp 
 	$(MV) parser/grammar-output.h include/parser/syntax.tab.h
 	$(CXX) $(CXXFLAGS) $(INCLUDE) src/parser/grammar.cpp -o src/parser/grammar.o
 
-src/parser/syntax.o: src/parser/grammar.o
+src/parser/syntax.o: parser/syntax.lex src/parser/grammar.o
 	$(FLEX) -o src/parser/syntax.cpp parser/syntax.lex
 	$(CXX) $(CXXFLAGS) $(INCLUDE) src/parser/syntax.cpp -o src/parser/syntax.o
 

@@ -7,8 +7,19 @@
 
 std::atomic<field::identifier_type> field::global_id;
 
+field::identifier_type field::generate_id()
+{
+    return global_id++;
+}
+
 field::field(filler_type filler, unique_impl impl) 
 : impl(std::move(impl)), filler(std::move(filler)), identifier(global_id++)
+{
+    
+}
+
+field::field(identifier_type id, filler_type filler, unique_impl impl)
+: impl(std::move(impl)), filler(std::move(filler)), identifier(id)
 {
     
 }
@@ -72,7 +83,7 @@ void field::prepare(random_generator &engine)
 
 void field::fill(const field_mapper &mapper) 
 {
-    if(filler)
+    if(filler) 
         filler->fill(*this, mapper);
 }
 

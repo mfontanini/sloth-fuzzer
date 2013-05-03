@@ -76,7 +76,9 @@ src/main.o: src/main.cpp include/block_field.h include/field_impl.h \
  include/function_nodes.h include/value_node.h include/field_mapper.h \
  include/const_value_node.h include/function_value_filler.h \
  include/field_mapper.h include/topological_sorter.h \
- include/functions/crc.h include/unary_field_function.h
+ include/functions/crc.h include/unary_field_function.h \
+ include/parser/syntax_parser.h include/parser/nodes.h \
+ include/value_node.h include/utils.h
 
 include/block_field.h:
 
@@ -111,6 +113,14 @@ include/topological_sorter.h:
 include/functions/crc.h:
 
 include/unary_field_function.h:
+
+include/parser/syntax_parser.h:
+
+include/parser/nodes.h:
+
+include/value_node.h:
+
+include/utils.h:
 src/topological_sorter.o: src/topological_sorter.cpp include/field.h \
  include/utils.h include/field_impl.h include/field_filler.h \
  include/topological_sorter.h include/exceptions.h
@@ -211,3 +221,46 @@ include/field.h:
 include/exceptions.h:
 
 include/field_mapper.h:
+src/parser/syntax_parser.o: src/parser/syntax_parser.cpp \
+ include/parser/syntax_parser.h include/parser/nodes.h include/field.h \
+ include/utils.h include/field_impl.h include/field_filler.h \
+ include/field_mapper.h include/field.h include/block_field.h \
+ include/value_node.h include/utils.h include/function_value_filler.h \
+ include/value_node.h include/const_value_node.h include/function_nodes.h \
+ include/field_mapper.h include/compound_field.h include/exceptions.h
+
+include/parser/syntax_parser.h:
+
+include/parser/nodes.h:
+
+include/field.h:
+
+include/utils.h:
+
+include/field_impl.h:
+
+include/field_filler.h:
+
+include/field_mapper.h:
+
+include/field.h:
+
+include/block_field.h:
+
+include/value_node.h:
+
+include/utils.h:
+
+include/function_value_filler.h:
+
+include/value_node.h:
+
+include/const_value_node.h:
+
+include/function_nodes.h:
+
+include/field_mapper.h:
+
+include/compound_field.h:
+
+include/exceptions.h:

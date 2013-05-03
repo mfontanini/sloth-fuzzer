@@ -17,4 +17,11 @@ public:
     }
 };
 
+class parse_error : public std::exception {
+public:
+    const char *what() const throw() {
+        return "parse error";
+    }
+};
+
 #endif // FUZZER_EXCEPTIONS_H

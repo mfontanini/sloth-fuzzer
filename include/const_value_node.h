@@ -1,6 +1,7 @@
 #ifndef FUZZER_CONST_VALUE_NODE_H
 #define FUZZER_CONST_VALUE_NODE_H
 
+#include <iostream>
 #include "value_node.h"
 
 class const_value_node : public value_node {
@@ -11,7 +12,7 @@ public:
         
     }
     
-    double eval() {
+    double eval(const field_mapper&) {
         return value;
     }
 private:

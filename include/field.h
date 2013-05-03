@@ -32,6 +32,7 @@ public:
     typedef field_impl::dependents_type dependents_type;
 
     field(filler_type filler, unique_impl impl);
+    field(identifier_type id, filler_type filler, unique_impl impl);
     field(const field &rhs);
     field(field &&rhs) noexcept;
     
@@ -68,6 +69,14 @@ public:
     {
         return field(filler, make_unique<Impl>(std::forward<Args>(args)...));
     }
+    
+    template<typename Impl, typename... Args>
+    static field from_impl(identifier_type id, filler_type filler, Args&&... args) 
+    {
+        return field(id, filler, make_unique<Impl>(std::forward<Args>(args)...));
+    }
+    
+    static identifier_type generate_id();
 private:
     template<typename T>
     struct type2type { };

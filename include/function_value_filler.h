@@ -14,7 +14,7 @@ public:
     void fill(field &f, const field_mapper &mapper);
     dependents_type dependent_fields() const;
 private:
-     unique_value value;
+    unique_value value;
 };
 
 #endif // FUZZER_FUNCTION_VALUE_FILLER_H

@@ -37,10 +37,10 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     BLOCK = 258,
-     NUMBER = 259,
-     INT_CONST = 260,
-     IDENTIFIER = 261
+     BLOCK = 262,
+     TEMPLATES = 261,
+     IDENTIFIER = 259,
+     INT_CONST = 260
    };
 #endif
 
@@ -51,9 +51,13 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 7 "parser/grammar.y"
+#line 44 "parser/grammar.y"
 
     grammar::field_node* ast_field;
+    grammar::filler_node* ast_filler;
+    grammar::value_node* ast_value_node;
+    grammar::script* ast_script;
+    std::vector<grammar::field_node*> *ast_fields;
     //filler_node* ast_filler;
     int int_val;
     char *symbol;
@@ -61,7 +65,7 @@ typedef union YYSTYPE
 
 
 /* Line 2068 of yacc.c  */
-#line 65 "parser/grammar-output.h"
+#line 69 "parser/grammar-output.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -70,4 +74,18 @@ typedef union YYSTYPE
 
 extern YYSTYPE yylval;
 
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+typedef struct YYLTYPE
+{
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+} YYLTYPE;
+# define yyltype YYLTYPE /* obsolescent; will be withdrawn */
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
+#endif
+
+extern YYLTYPE yylloc;
 

@@ -9,6 +9,7 @@
 
 class value_wrapper;
 class field;
+class field_mapper;
 
 class field_impl {
 public:

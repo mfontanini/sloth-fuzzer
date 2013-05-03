@@ -1,6 +1,7 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#include <iostream> //borrame
 #include "field.h"
 #include "topological_sorter.h"
 #include "exceptions.h"
@@ -13,6 +14,8 @@ auto topological_sorter::topological_sort(const field &f) -> fields_type
     f.accept_visitor(
         [&](const field &a_field) { 
             auto vec = a_field.dependent_fields();
+            for(const auto &i: vec)
+                std::cout << a_field.id() << " depends on " << i << std::endl;
             topo_map[a_field.id()] = decltype(topo_map)::mapped_type(vec.begin(), vec.end());
         }
     );
