@@ -73,10 +73,10 @@ include/field.h:
 src/main.o: src/main.cpp include/block_field.h include/field_impl.h \
  include/utils.h include/compound_field.h include/field.h \
  include/field_filler.h include/field.h include/value_filler.h \
- include/function_nodes.h include/value_node.h include/const_value_node.h \
- include/function_value_filler.h include/field_mapper.h \
- include/topological_sorter.h include/functions/crc.h \
- include/unary_field_function.h
+ include/function_nodes.h include/value_node.h include/field_mapper.h \
+ include/const_value_node.h include/function_value_filler.h \
+ include/field_mapper.h include/topological_sorter.h \
+ include/functions/crc.h include/unary_field_function.h
 
 include/block_field.h:
 
@@ -98,6 +98,8 @@ include/function_nodes.h:
 
 include/value_node.h:
 
+include/field_mapper.h:
+
 include/const_value_node.h:
 
 include/function_value_filler.h:
@@ -111,7 +113,7 @@ include/functions/crc.h:
 include/unary_field_function.h:
 src/topological_sorter.o: src/topological_sorter.cpp include/field.h \
  include/utils.h include/field_impl.h include/field_filler.h \
- include/topological_sorter.h
+ include/topological_sorter.h include/exceptions.h
 
 include/field.h:
 
@@ -122,6 +124,8 @@ include/field_impl.h:
 include/field_filler.h:
 
 include/topological_sorter.h:
+
+include/exceptions.h:
 src/unary_field_function.o: src/unary_field_function.cpp \
  include/unary_field_function.h include/field.h include/utils.h \
  include/field_impl.h include/field_filler.h include/value_node.h \

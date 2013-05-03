@@ -4,6 +4,7 @@
 #include <functional>
 #include <algorithm>
 #include "value_node.h"
+#include "field_mapper.h"
 
 // the Functor is probably a stateless class, so probably EBCO works here
 template<typename Functor>
@@ -54,6 +55,26 @@ public:
     }
 private:
     unique_node node;
+};
+
+class node_value_function_node : public value_node {
+public:
+    node_value_function_node(field::identifier_type id)
+    : id(id) 
+    {
+        
+    }
+    
+    double eval(const field_mapper& mapper) {
+        return mapper.find_field(id).get_value();
+    }
+    
+    dependents_type dependent_fields() const 
+    {
+        return { id };
+    }
+private:
+    field::identifier_type id;
 };
 
 typedef binary_function_node<std::plus<float>> plus_function_node;

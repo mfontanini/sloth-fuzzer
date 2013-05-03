@@ -1,11 +1,14 @@
 CXX=g++
 CP=cp
+MV=mv
 CXXFLAGS= -c -Wall -g -O2 -std=c++0x
+FLEX=flex
+BISON=bison
 INCLUDE = -Iinclude
 LDFLAGS= -lpthread -lcrypto
 RM=rm
-SOURCES= $(wildcard src/*.cpp src/functions/*.cpp)
-OBJECTS=$(SOURCES:.cpp=.o)
+SOURCES= $(wildcard src/*.cpp src/functions/*.cpp src/parser/*cpp) 
+OBJECTS=$(SOURCES:.cpp=.o) src/parser/grammar.o src/parser/syntax.o
 DEPS = $(SOURCES:.cpp=.d)
 
 EXECUTABLE=fuzzer
@@ -35,6 +38,16 @@ $(EXECUTABLE): $(OBJECTS)
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $< -o $@
+
+src/parser/grammar.o:
+	bison -d -o parser/grammar-output parser/grammar.y
+	$(MV) parser/grammar-output src/parser/grammar.cpp 
+	$(MV) parser/grammar-output.h include/parser/syntax.tab.h
+	$(CXX) $(CXXFLAGS) $(INCLUDE) src/parser/grammar.cpp -o src/parser/grammar.o
+
+src/parser/syntax.o: src/parser/grammar.o
+	$(FLEX) -o src/parser/syntax.cpp parser/syntax.lex
+	$(CXX) $(CXXFLAGS) $(INCLUDE) src/parser/syntax.cpp -o src/parser/syntax.o
 
 clean:
 	rm $(OBJECTS) $(EXECUTABLE)

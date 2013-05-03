@@ -49,7 +49,7 @@ public:
     void accept_visitor(const visitor_type &visitor) const;
     
     void set_value(double value);
-    double get_value();
+    double get_value() const;
     
     dependents_type dependent_fields() const;
     
@@ -74,10 +74,10 @@ private:
     
     static std::atomic<identifier_type> global_id;
     
-    double le_extract();
-    uint16_t extract(type2type<uint16_t>);
-    uint32_t extract(type2type<uint32_t>);
-    uint64_t extract(type2type<uint64_t>);
+    double le_extract() const;
+    uint16_t extract(type2type<uint16_t>) const;
+    uint32_t extract(type2type<uint32_t>) const;
+    uint64_t extract(type2type<uint64_t>) const;
     
     void le_insert(double value);
     void insert(uint16_t value);

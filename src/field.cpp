@@ -81,12 +81,12 @@ void field::set_value(double value)
     le_insert(value);
 }
 
-double field::get_value()
+double field::get_value() const
 {
     return le_extract();
 }
 
-double field::le_extract() 
+double field::le_extract() const
 {
     switch(size()) {
         case sizeof(uint8_t):
@@ -101,13 +101,13 @@ double field::le_extract()
     throw invalid_field_size();
 }
 
-uint16_t field::extract(type2type<uint16_t>) 
+uint16_t field::extract(type2type<uint16_t>) const
 {
     return (*this)[0] | 
             (static_cast<uint32_t>((*this)[1]) << 8);
 }
 
-uint32_t field::extract(type2type<uint32_t>) 
+uint32_t field::extract(type2type<uint32_t>) const
 {
     return (*this)[0] | 
             (static_cast<uint32_t>((*this)[1]) << 8) | 
@@ -115,7 +115,7 @@ uint32_t field::extract(type2type<uint32_t>)
             (static_cast<uint32_t>((*this)[3]) << 24);
 }
 
-uint64_t field::extract(type2type<uint64_t>) 
+uint64_t field::extract(type2type<uint64_t>) const
 {
     return (*this)[0] |
             (static_cast<uint64_t>((*this)[1]) << 8) | 
