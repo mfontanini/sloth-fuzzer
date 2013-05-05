@@ -13,7 +13,7 @@ md5_function::md5_function(identifier_type id)
     
 }
 
-void md5_function::fill(const field &input_field, field &output_field) 
+void md5_function::apply(const field &input_field, field &output_field) 
 {
     if(output_field.size() < MD5_DIGEST_LENGTH)
         throw invalid_field_size();

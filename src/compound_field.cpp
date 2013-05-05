@@ -1,8 +1,9 @@
 #include <algorithm>
 #include "compound_field.h"
+#include "exceptions.h"
 
 compound_field_impl::compound_field_impl()
-: total_size(0)
+: last_iterator(indexes.end()), total_size(0)
 {
     
 }
@@ -14,6 +15,9 @@ void compound_field_impl::add_field(field child)
 
 auto compound_field_impl::find_index(size_t index) const -> indexes_type::const_iterator
 {
+    // prepare must be called before accesing this field
+    if(last_iterator == indexes.end())
+        throw unprepared_field();
     if(index < last_iterator->first)
         last_iterator = indexes.begin();
     auto iter = last_iterator;
@@ -23,7 +27,7 @@ auto compound_field_impl::find_index(size_t index) const -> indexes_type::const_
     return last_iterator;
 }
 
-void compound_field_impl::prepare(random_generator &) 
+void compound_field_impl::prepare(generation_context &) 
 {
     indexes.clear();
     size_t index = 0;
@@ -54,11 +58,9 @@ size_t compound_field_impl::size() const
 
 void compound_field_impl::accept_visitor(const visitor_type& visitor) const
 {
-    for_each(
-        fields.begin(),
-        fields.end(),
-        visitor
-    );
+    for(const auto &f : fields) {
+        f.accept_visitor(visitor);
+    }
 }
 
 auto compound_field_impl::dependent_fields() const -> dependents_type
@@ -71,4 +73,9 @@ auto compound_field_impl::dependent_fields() const -> dependents_type
         std::mem_fn(&field::id)
     );
     return output;
+}
+
+void compound_field_impl::clear_children()
+{
+    fields.clear();
 }

@@ -18,12 +18,12 @@ template<typename ValueType>
 class dereference_helper;
 
 class field_mapper;
+class generation_context;
 
 class field {
 public:
     typedef field_impl::identifier_type identifier_type;
     typedef field_impl::value_type value_type;
-    typedef field_impl::random_generator random_generator;
     typedef field_impl::visitor_type visitor_type;
     typedef field_iterator<value_type> iterator;
     typedef field_iterator<const value_type> const_iterator;
@@ -44,7 +44,7 @@ public:
     const_iterator end() const;
     
     size_t size() const;
-    void prepare(random_generator &engine);
+    void prepare(generation_context &context);
     void fill(const field_mapper &mapper);
     
     void accept_visitor(const visitor_type &visitor) const;

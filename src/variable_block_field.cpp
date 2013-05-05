@@ -1,4 +1,5 @@
 #include "variable_block_field.h"
+#include "generation_context.h"
 
 variable_block_field_impl::variable_block_field_impl(size_t min_size, size_t max_size) 
 : distribution(min_size, max_size)
@@ -21,6 +22,6 @@ size_t variable_block_field_impl::size() const
     return data.size();
 }
 
-void variable_block_field_impl::prepare(random_generator &engine) {
-    data.resize(distribution(engine));
+void variable_block_field_impl::prepare(generation_context &context) {
+    data.resize(distribution(context.get_random_generator()));
 }

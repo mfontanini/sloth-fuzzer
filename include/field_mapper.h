@@ -10,6 +10,7 @@
 class field_mapper {
 public:
     void register_field(std::string name, field::identifier_type id);
+    void register_field(field::identifier_type id, const field &f);
     void identify_fields(const field &root);
     const field& find_field(field::identifier_type id) const;
     field::identifier_type find_field_name(const std::string &fname) const;

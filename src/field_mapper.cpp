@@ -6,6 +6,11 @@ void field_mapper::register_field(std::string name, field::identifier_type id)
     str2id.insert(std::make_pair(std::move(name), id));
 }
 
+void field_mapper::register_field(field::identifier_type id, const field &f)
+{
+    id2field.insert({ id, f });
+}
+
 field::identifier_type field_mapper::find_register_field_name(const std::string &fname)
 {
     auto iter = str2id.find(fname);

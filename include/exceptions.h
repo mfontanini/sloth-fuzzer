@@ -24,4 +24,11 @@ public:
     }
 };
 
+class unprepared_field : public std::exception {
+public:
+    const char *what() const throw() {
+        return "unprepared field";
+    }
+};
+
 #endif // FUZZER_EXCEPTIONS_H

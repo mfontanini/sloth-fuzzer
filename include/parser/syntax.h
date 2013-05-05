@@ -25,20 +25,10 @@ enum fuzzer_identifiers {
     IDENTIFIER,
     INT_CONST,
     TEMPLATES,
-    BLOCK
+    BLOCK,
+    COMPOUND_BLOCK,
+    VAR_BLOCK
 };
 #endif
-
-/*class symbol_table {
-public:
-    unsigned add_string(const std::string& str) {
-        auto iter = symbols.find(str);
-        if(iter == symbols.end())
-            iter = symbols.insert({ str, symbols.size() }).first;
-        return iter->second;
-    }
-private:
-    std::map<std::string, unsigned> symbols;
-};*/
 
 #endif // FUZZER_SYNTAX_H

@@ -37,8 +37,11 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
+     TEMPLATE = 258,
      BLOCK = 262,
      TEMPLATES = 261,
+     COMPOUND_BLOCK = 263,
+     VAR_BLOCK = 264,
      IDENTIFIER = 259,
      INT_CONST = 260
    };
@@ -51,21 +54,21 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 44 "parser/grammar.y"
+#line 42 "parser/grammar.y"
 
     grammar::field_node* ast_field;
     grammar::filler_node* ast_filler;
     grammar::value_node* ast_value_node;
     grammar::script* ast_script;
+    grammar::template_def_node* ast_template_def;
     std::vector<grammar::field_node*> *ast_fields;
-    //filler_node* ast_filler;
     int int_val;
-    char *symbol;
+    std::string *symbol;
 
 
 
 /* Line 2068 of yacc.c  */
-#line 69 "parser/grammar-output.h"
+#line 72 "parser/grammar-output.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

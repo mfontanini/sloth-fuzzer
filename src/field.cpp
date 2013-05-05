@@ -4,6 +4,7 @@
 #include "endianness.h"
 #include "exceptions.h"
 #include "field_mapper.h"
+#include "generation_context.h"
 
 std::atomic<field::identifier_type> field::global_id;
 
@@ -76,9 +77,9 @@ auto field::operator[](size_t index) const -> dereference_helper<const value_typ
     return *(begin() + index);
 }
 
-void field::prepare(random_generator &engine)
+void field::prepare(generation_context &context)
 {
-    impl->prepare(engine);
+    impl->prepare(context);
 }
 
 void field::fill(const field_mapper &mapper) 
@@ -89,7 +90,10 @@ void field::fill(const field_mapper &mapper)
 
 void field::set_value(double value)
 {
-    le_insert(value);
+    if(value == 0.0)
+        std::fill(begin(), end(), 0);
+    else
+        le_insert(value);
 }
 
 double field::get_value() const

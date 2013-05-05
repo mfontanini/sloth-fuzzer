@@ -14,9 +14,16 @@
 #include "functions/crc.h"
 #include "function_value_filler.h"
 #include "parser/syntax_parser.h"
+#include "generation_context.h"
+#include "template_field.h"
 
 void test_parse() {
-    std::string input = "block<2> carlos = 4; block<4> roberto = 50 + 5 * carlos;";
+    std::string input = "templates { roberto = { block<4> = 0; block<4>; }; }; "
+                        "block<4> roberto = 50 + 5 * carlos; "
+                        "block<2> carlos = 4; "
+                        "multi_block = { block<2> = roberto; block<2>; };"
+                        "block<16> = md5(carlos); "
+                        "template<roberto, 1, 3>;";
     std::istringstream input_stream(input); 
     syntax_parser parser;
     parser.parse(input_stream);
@@ -32,19 +39,63 @@ void test_parse() {
     
     topological_sorter sorter;
     
+    generation_context ctx;
+    
     for(const auto &i : sorter.topological_sort(root)) {
-        const_cast<field&>(mapper.find_field(i)).prepare(rnd);
+        const_cast<field&>(mapper.find_field(i)).prepare(ctx);
         const_cast<field&>(mapper.find_field(i)).fill(mapper);
     }
     
-    root.accept_visitor([&](const field &f) { 
-        if(f.id() != root.id())
-            std::cout << f.id() << " - " << f.get_value() << std::endl; 
-    });
+        std::cout << std::hex;
+    for(auto&& i : root)
+        std::cout << (int)i;
+    std::cout << std::endl;
+    
+    /*root.accept_visitor([&](const field &f) { 
+        if(f.id() != root.id()) {
+            if(f.size() == 2 || f.size() == 4)
+                std::cout << f.id() << " - " << f.get_value() << std::endl; 
+            else {
+                for(const auto &i : f)
+                    std::cout << std::hex << (int)i;
+                std::cout << std::dec << std::endl;
+            }
+        }
+    });*/
+    
+}
+
+void test_template() {
+    auto filled = field::from_impl<block_field_impl>(std::make_shared<function_value_filler>(make_unique<const_value_node>(99999)), 4);
+    auto compound_impl = make_unique<compound_field_impl>();
+    compound_impl->add_field(field::from_impl<block_field_impl>(nullptr, 6));
+    compound_impl->add_field(field::from_impl<block_field_impl>(
+        std::make_shared<function_value_filler>(make_unique<crc32_function>(filled.id())), 4));
+    
+    auto impl = make_unique<template_field_impl>(field(nullptr, std::move(compound_impl)), 2, 5);
+    
+    auto compound_impl2 = make_unique<compound_field_impl>();
+    compound_impl2->add_field(std::move(filled));
+    compound_impl2->add_field(field(nullptr, std::move(impl)));
+    
+    generation_context ctx;
+    field root(nullptr, std::move(compound_impl2));
+    topological_sorter sorter;
+    ctx.get_mapper().identify_fields(root);
+    for(const auto &i : sorter.topological_sort(root)) {
+        const_cast<field&>(ctx.get_mapper().find_field(i)).prepare(ctx);
+        const_cast<field&>(ctx.get_mapper().find_field(i)).fill(ctx.get_mapper());
+    }
+    
+    std::cout << std::hex;
+    for(auto&& i : root)
+        std::cout << (int)i;
+    std::cout << std::endl;
 }
 
 int main() {
     test_parse();
+    //test_template();
     /*auto filler = std::make_shared<value_filler>("ASD-carlos-jaskldjaskl");
     auto impl = make_unique<compound_field_impl>();
     impl->add_field(field::from_impl<block_field_impl>(

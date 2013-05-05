@@ -10,7 +10,7 @@
 class compound_field_impl : public clonable_field_impl<compound_field_impl> {
 public:
     compound_field_impl();
-    void prepare(random_generator &);
+    void prepare(generation_context &);
     void set(size_t index, value_type value);
     value_type get(size_t index) const;
     size_t size() const;
@@ -18,6 +18,8 @@ public:
 
     void add_field(field child);
     dependents_type dependent_fields() const;
+protected:
+    void clear_children();
 private:
     typedef std::vector<field> fields_type;
     typedef std::map<size_t, std::reference_wrapper<field>> indexes_type;

@@ -2,7 +2,6 @@
 #define FUZZER_FIELD_IMPL_H
 
 #include <cstdint>
-#include <random>
 #include <functional>
 #include <vector>
 #include "utils.h"
@@ -10,11 +9,11 @@
 class value_wrapper;
 class field;
 class field_mapper;
+class generation_context;
 
 class field_impl {
 public:
     typedef uint8_t value_type;
-    typedef std::random_device random_generator;
     typedef std::function<void(const field &)> visitor_type;
     typedef unsigned int identifier_type;
     typedef std::vector<identifier_type> dependents_type;
@@ -22,7 +21,7 @@ public:
     virtual ~field_impl() = default;
     
     virtual std::unique_ptr<field_impl> clone() const = 0;
-    virtual void prepare(random_generator &engine) { };
+    virtual void prepare(generation_context &) { };
     virtual void set(size_t index, value_type value) = 0;
     virtual value_type get(size_t index) const = 0;
     virtual size_t size() const = 0;
@@ -38,7 +37,8 @@ private:
 template<typename Concrete>
 class clonable_field_impl : public field_impl {
 public:
-    std::unique_ptr<field_impl> clone() const {
+    std::unique_ptr<field_impl> clone() const 
+    {
         return make_unique<Concrete>(static_cast<const Concrete&>(*this));
     }
 };

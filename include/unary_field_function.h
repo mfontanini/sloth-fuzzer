@@ -22,7 +22,7 @@ public:
     void fill(field &f, const field_mapper& mapper);
     dependents_type dependent_fields() const;
 private:
-    virtual double apply(const field &input_field, field &output_field) = 0;
+    virtual void apply(const field &input_field, field &output_field) = 0;
 
     identifier_type id;
 };
