@@ -56,6 +56,11 @@ size_t compound_field_impl::size() const
     return total_size;
 }
 
+size_t compound_field_impl::field_count() const
+{
+    return fields.size();
+}
+
 void compound_field_impl::accept_visitor(const visitor_type& visitor) const
 {
     for(const auto &f : fields) {

@@ -16,6 +16,7 @@
 #include "parser/syntax_parser.h"
 #include "generation_context.h"
 #include "template_field.h"
+#include "functions/misc.h"
 
 void test_parse() {
     std::string input = "templates { roberto = { block<4> = 0; block<4>; }; }; "

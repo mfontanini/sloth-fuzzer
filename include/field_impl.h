@@ -25,6 +25,7 @@ public:
     virtual void set(size_t index, value_type value) = 0;
     virtual value_type get(size_t index) const = 0;
     virtual size_t size() const = 0;
+    virtual size_t field_count() const { return 1; };
     virtual void accept_visitor(const visitor_type& visitor) const { };
     virtual dependents_type dependent_fields() const { 
         return { };

@@ -43,8 +43,14 @@ field& field::operator=(field rhs)
     return *this;
 }
 
-size_t field::size() const {
+size_t field::size() const 
+{
     return impl->size();
+}
+
+size_t field::field_count() const
+{
+    return impl->field_count();
 }
 
 auto field::begin() -> iterator

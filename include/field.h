@@ -44,6 +44,8 @@ public:
     const_iterator end() const;
     
     size_t size() const;
+    // the number of children fields 
+    size_t field_count() const;
     void prepare(generation_context &context);
     void fill(const field_mapper &mapper);
     
