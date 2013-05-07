@@ -12,13 +12,14 @@
 #include "variable_block_field.h"
 #include "function_value_filler.h"
 #include "const_value_node.h"
+#include "functions/misc.h"
 
 std::istream *istr = nullptr;
 int curr_lineno = 0;
 syntax_parser* grammar_syntax_parser = nullptr;
 
 
-extern "C" void yyparse();
+extern "C" int yyparse();
 
 field::filler_type default_filler() {
     return make_unique<random_function>();
@@ -29,6 +30,22 @@ syntax_parser::syntax_parser()
     register_filler_function(
         "md5", 
         [](identifier_type id) { return std::make_shared<md5_function>(id); }
+    );
+    register_value_function(
+        "size", 
+        [&](identifier_type id) { 
+            return node_alloc<value_node>([=](field_mapper &) {
+                return make_unique<size_function>(id);
+            }); 
+        }
+    );
+    register_value_function(
+        "count", 
+        [&](identifier_type id) {
+            return node_alloc<value_node>([=](field_mapper &) {
+                return make_unique<field_count_function>(id); 
+            });
+        }
     );
 }
 
@@ -43,8 +60,8 @@ void syntax_parser::parse(std::istream &input)
     istr = &input;
     grammar_syntax_parser = this;
     
-    yyparse();
-    
+    if(yyparse() != 0)        
+        throw parse_error();
     grammar_syntax_parser = nullptr;
     istr = nullptr;
 }
@@ -83,9 +100,14 @@ field_mapper &syntax_parser::get_mapper()
     return mapper;
 }
 
-auto syntax_parser::allocate_function(const std::string &name, identifier_type id) -> filler_ptr
+auto syntax_parser::allocate_filler_function(const std::string &name, identifier_type id) -> filler_ptr
 {
-    return functions.at(name)(id);
+    return filler_functions.at(name)(id);
+}
+
+auto syntax_parser::allocate_value_function(const std::string &name, identifier_type id) -> value_node*
+{
+    return value_functions.at(name)(id);
 }
 
 // block field
@@ -212,6 +234,15 @@ auto syntax_parser::make_const_value_node(float f) -> value_node *
     );
 }
 
+auto syntax_parser::make_const_string_node(const std::string &str) -> filler_node *
+{
+    return node_alloc<filler_node>(
+        [=](field_mapper &) {
+            return std::make_shared<const_string_node>(str);
+        }
+    );
+}
+
 auto syntax_parser::make_node_value_node(const std::string &name) -> value_node *
 {
     auto id = mapper.find_register_field_name(name);
@@ -227,11 +258,34 @@ auto syntax_parser::make_node_filler_node(const std::string &field_name,
 {
     auto id = mapper.find_register_field_name(field_name);
     auto &parser = *this;
-    return node_alloc<filler_node>(
-        [=, &parser](field_mapper &) {
-            return allocate_function(function_name, id);
-        }
-    );
+    if(is_filler_function(function_name)) {
+        return node_alloc<filler_node>(
+            [=, &parser](field_mapper &) {
+                return allocate_filler_function(function_name, id);
+            }
+        );
+    }
+    else if(is_value_function(function_name)) {
+        return node_alloc<filler_node>(
+            [=, &parser](field_mapper &mapper) {
+                return make_unique< ::function_value_filler>(
+                    ::function_value_filler::unique_value(
+                        allocate_value_function(function_name, id)->allocate(mapper)
+                    )
+                );
+            }
+        );
+    }
+    else {
+        return nullptr; // fixme
+    }
+}
+
+auto syntax_parser::make_node_value_function_node(const std::string &field_name, 
+  const std::string &function_name) -> value_node *
+{
+    auto id = mapper.find_register_field_name(field_name);
+    return allocate_value_function(function_name, id);
 }
 
 auto syntax_parser::make_function_value_filler_node(value_node *node) -> filler_node *
@@ -245,7 +299,12 @@ auto syntax_parser::make_function_value_filler_node(value_node *node) -> filler_
     );
 }
 
-std::string *syntax_parser::make_string(const char *input)
+bool syntax_parser::is_filler_function(const std::string &name)
 {
-    return node_alloc<std::string>(input);
+    return filler_functions.count(name) == 1;
+}
+
+bool syntax_parser::is_value_function(const std::string &name)
+{
+    return value_functions.count(name) == 1;
 }

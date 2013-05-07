@@ -15,14 +15,15 @@ class field;
 
 class syntax_parser {
 public:
+    typedef grammar::value_node value_node;
     typedef std::shared_ptr<field_filler> filler_ptr;
-    typedef std::function<filler_ptr(field_filler::identifier_type)> allocator_type;
+    typedef std::function<filler_ptr(field_filler::identifier_type)> filler_fun_type;
+    typedef std::function<value_node*(field_filler::identifier_type)> value_fun_type;
     typedef field_filler::identifier_type identifier_type;
     typedef grammar::field_node field_node;
     typedef grammar::filler_node filler_node;
     typedef grammar::fields_list fields_list;
     typedef grammar::template_def_node template_def_node;
-    typedef grammar::value_node value_node;
 
     syntax_parser();
 
@@ -39,9 +40,19 @@ public:
     template<typename Functor>
     void register_filler_function(std::string name, Functor &&ptr)
     {
-        functions.insert(std::make_pair(std::move(name), std::move(ptr)));
+        filler_functions.insert(std::make_pair(std::move(name), std::move(ptr)));
     }
-    filler_ptr allocate_function(const std::string &name, identifier_type id);
+    
+    template<typename Functor>
+    void register_value_function(std::string name, Functor &&ptr)
+    {
+        value_functions.insert(std::make_pair(std::move(name), std::move(ptr)));
+    }
+    
+    filler_ptr allocate_filler_function(const std::string &name, identifier_type id);
+    value_node *allocate_value_function(const std::string &name, identifier_type id);
+    bool is_filler_function(const std::string &name);
+    bool is_value_function(const std::string &name);
     
     /* ************** Allocator functions ******************/
     
@@ -76,14 +87,21 @@ public:
     // stuff
     
     value_node *make_const_value_node(float f);
+    filler_node *make_const_string_node(const std::string &str);
     value_node *make_node_value_node(const std::string &name); 
     filler_node *make_node_filler_node(const std::string &field_name, 
+      const std::string &function_name);
+    value_node *make_node_value_function_node(const std::string &field_name, 
       const std::string &function_name);
     filler_node *make_function_value_filler_node(value_node *node);
     
     //
     
-    std::string *make_string(const char *input);
+    template<typename... Ts>
+    std::string *make_string(Ts&&... args)
+    {
+        return node_alloc<std::string>(std::forward<Ts>(args)...);
+    }
     
     template<typename Functor>
     value_node *make_binary_function_value_node(value_node *lhs, value_node *rhs) 
@@ -109,7 +127,8 @@ private:
 
     std::unique_ptr<grammar::script> script_root;
     field_mapper mapper;
-    std::map<std::string, allocator_type> functions;
+    std::map<std::string, filler_fun_type> filler_functions;
+    std::map<std::string, value_fun_type> value_functions;
     std::map<std::string, grammar::template_def_node*> templates;
     multiptr_destructor<
         field_node, 

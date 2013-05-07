@@ -2,21 +2,24 @@
 #define FUZZER_CONST_VALUE_NODE_H
 
 #include <iostream>
+#include <string>
 #include "value_node.h"
+#include "field_filler.h"
 
 class const_value_node : public value_node {
 public:
-    const_value_node(float value)
-    : value(value)
-    {
-        
-    }
-    
-    double eval(const field_mapper&) {
-        return value;
-    }
+    const_value_node(float value);
+    double eval(const field_mapper&);
 private:
     float value;
+};
+
+class const_string_node : public field_filler {
+public:
+    const_string_node(std::string value);
+    void fill(field &f, const field_mapper&);
+private:
+    std::string value;
 };
 
 #endif // FUZZER_CONST_VALUE_NODE_H

@@ -4,10 +4,13 @@
 #include "unary_field_function.h"
 
 template<size_t (field::* MemFun)() const>
-class generic_field_function : public unary_field_function {
+class generic_field_function : public unary_field_function<generic_field_function<MemFun>> {
 public:
+    typedef typename unary_field_function<generic_field_function<MemFun>>::identifier_type identifier_type; 
+        
+
     generic_field_function(identifier_type id)
-    : unary_field_function(id)
+    : unary_field_function<generic_field_function<MemFun>>(id)
     {
         
     }

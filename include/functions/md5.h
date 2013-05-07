@@ -3,7 +3,7 @@
 
 #include "unary_field_function.h"
 
-class md5_function : public unary_field_filler_function {
+class md5_function : public unary_field_filler_function<md5_function> {
 public:
     md5_function(identifier_type id);
     

@@ -9,7 +9,7 @@
 #include "parser/syntax_parser.h"
 #include "function_nodes.h"
 
-int counter = 0;
+extern int curr_lineno;
 
 extern syntax_parser* grammar_syntax_parser;
 
@@ -18,8 +18,8 @@ void yyerror(const char *s)
 std::cout << BLOCK << std::endl;
     extern int curr_lineno;
 
-    std::cerr << "line " << curr_lineno << ": " \
-    << s << " at or near ";
+    std::cerr << "Line " << curr_lineno << ": " 
+              << s << std::endl;
     //std::cerr << yylloc.first_column;
     std::cerr << std::endl;
 }
@@ -48,27 +48,25 @@ extern "C"
     std::vector<grammar::field_node*> *ast_fields;
     int int_val;
     std::string *symbol;
+    const char *error_msg;
 }
 
 %token TEMPLATE 258 BLOCK 262 TEMPLATES 261 COMPOUND_BLOCK 263 VAR_BLOCK 264
 %token '<' '>' ';' '+' '-' '/' '*' '{' '}' '(' ')' ','
-%token <symbol> IDENTIFIER 259
+%token <symbol> IDENTIFIER 259 STR_CONST 265
 %token <int_val> INT_CONST 260
 
 %type <ast_field>  field block_field compound_field var_block template_field
 %type <ast_template_def> template_def
 %type <ast_script> script
 %type <ast_fields> fields templates
-%type <ast_value_node> expression
+%type <ast_value_node> expression expression_func
 %type <ast_filler> filler filler_function
 
 %left '-' '+'
 %left '*' '/'
 
 %start script
-
-%destructor { free($$); } <symbol>
-%destructor {  } <int_val>
 
 
 %%
@@ -183,11 +181,20 @@ filler:
     filler_function {
         $$ = $1;
     }
+    |
+    STR_CONST {
+        $$ = grammar_syntax_parser->make_const_string_node(*$1);
+    }
 ;
 
 filler_function:
     IDENTIFIER '(' IDENTIFIER ')' {
         $$ = grammar_syntax_parser->make_node_filler_node(*$3, *$1);
+        if($$ == nullptr) {
+            std::cerr << "Line " << curr_lineno << ": function \"" 
+                      << *$1 << "\" does not exist." << std::endl;
+            YYABORT;
+        }
     }
 ;
 
@@ -200,20 +207,35 @@ expression:
         $$ = grammar_syntax_parser->make_node_value_node(*$1);
     }
     |
-    expression '+' expression {
+    expression_func '+' expression_func {
         $$ = grammar_syntax_parser->make_binary_function_value_node<plus_function_node>($1, $3);
     }
     |
-    expression '-' expression {
+    expression_func '-' expression_func {
         $$ = grammar_syntax_parser->make_binary_function_value_node<minus_function_node>($1, $3);
     }
     |
-    expression '/' expression {
+    expression_func '/' expression_func {
         $$ = grammar_syntax_parser->make_binary_function_value_node<divides_function_node>($1, $3);
     }
     |
-    expression '*' expression {
+    expression_func '*' expression_func {
         $$ = grammar_syntax_parser->make_binary_function_value_node<multiplies_function_node>($1, $3);
+    }
+;
+
+expression_func:
+    IDENTIFIER '(' IDENTIFIER ')' {
+        $$ = grammar_syntax_parser->make_node_value_function_node(*$3, *$1);
+        if($$ == nullptr) {
+            std::cerr << "Line " << curr_lineno << ": function \"" 
+                      << $1 << "\" does not exist." << std::endl;
+            YYABORT;
+        }
+    }
+    |
+    expression {
+        $$ = $1;
     }
 ;
 

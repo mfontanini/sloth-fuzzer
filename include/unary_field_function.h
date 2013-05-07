@@ -3,26 +3,53 @@
 
 #include "field.h"
 #include "value_node.h"
+#include "field_mapper.h"
 
-
+template<typename Concrete>
 class unary_field_function : public value_node {
 public:
-    unary_field_function(identifier_type id);
-    double eval(const field_mapper& mapper);
-    dependents_type dependent_fields() const;
+    unary_field_function(identifier_type id)
+    : id(id)
+    {
+        
+    }
+    
+    double eval(const field_mapper& mapper)
+    {
+        return static_cast<Concrete&>(*this).apply(mapper.find_field(id));
+    }
+
+    dependents_type dependent_fields() const
+    {
+        return { id };
+    }
 private:
-    virtual double apply(const field &input_field) = 0;
+    // The dispatched method should follow this signature:
+    //double apply(const field &input_field);
 
     identifier_type id;
 };
 
+template<typename Concrete>
 class unary_field_filler_function : public field_filler {
 public:
-    unary_field_filler_function(identifier_type id);
-    void fill(field &f, const field_mapper& mapper);
-    dependents_type dependent_fields() const;
+    unary_field_filler_function(identifier_type id)
+    : id(id)
+    {
+        
+    }
+    void fill(field &f, const field_mapper& mapper)
+    {
+        static_cast<Concrete&>(*this).apply(mapper.find_field(id), f);
+    }
+
+    dependents_type dependent_fields() const
+    {
+        return { id };
+    }
 private:
-    virtual void apply(const field &input_field, field &output_field) = 0;
+    // The dispatched method should follow this signature:
+    // void apply(const field &input_field, field &output_field);
 
     identifier_type id;
 };

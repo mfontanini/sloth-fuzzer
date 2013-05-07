@@ -4,7 +4,7 @@
 #include "field_mapper.h"
 
 crc32_function::crc32_function(identifier_type id)
-: unary_field_function(id)
+: unary_field_function<crc32_function>(id)
 {
     
 }

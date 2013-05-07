@@ -27,7 +27,9 @@ enum fuzzer_identifiers {
     TEMPLATES,
     BLOCK,
     COMPOUND_BLOCK,
-    VAR_BLOCK
+    VAR_BLOCK,
+    STR_CONST,
+    ERROR
 };
 #endif
 

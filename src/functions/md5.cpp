@@ -8,7 +8,7 @@
 #include "field_mapper.h"
 
 md5_function::md5_function(identifier_type id) 
-: unary_field_filler_function(id)
+: unary_field_filler_function<md5_function>(id)
 {
     
 }

@@ -23,8 +23,8 @@ void test_parse() {
                         "block<4> roberto = 50 + 5 * carlos; "
                         "block<2> carlos = 4; "
                         "multi_block = { block<2> = roberto; block<2>; };"
-                        "block<16> = md5(carlos); "
-                        "template<roberto, 1, 3>;";
+                        "block<16> = md5(carlos); # ajskldjaskl aksjljklasd\n"
+                        "block<4> = \"\\x00JA\\x00\";";
     std::istringstream input_stream(input); 
     syntax_parser parser;
     parser.parse(input_stream);

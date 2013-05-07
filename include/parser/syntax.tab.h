@@ -43,6 +43,7 @@
      COMPOUND_BLOCK = 263,
      VAR_BLOCK = 264,
      IDENTIFIER = 259,
+     STR_CONST = 265,
      INT_CONST = 260
    };
 #endif
@@ -64,11 +65,12 @@ typedef union YYSTYPE
     std::vector<grammar::field_node*> *ast_fields;
     int int_val;
     std::string *symbol;
+    const char *error_msg;
 
 
 
 /* Line 2068 of yacc.c  */
-#line 72 "parser/grammar-output.h"
+#line 74 "parser/grammar-output.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

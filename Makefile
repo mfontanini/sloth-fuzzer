@@ -1,7 +1,7 @@
 CXX=g++
 CP=cp
 MV=mv
-CXXFLAGS= -c -Wall -g -O2 -std=c++0x
+CXXFLAGS= -c -Wall -g -std=c++0x
 FLEX=flex
 BISON=bison
 INCLUDE = -Iinclude
