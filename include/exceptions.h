@@ -31,4 +31,29 @@ public:
     }
 };
 
+class file_open_exception : public std::exception {
+public:
+    const char *what() const throw() {
+        return "file open exception";
+    }
+};
+
+class parser_exception : public std::runtime_error {
+public:
+    parser_exception(const std::string &str)
+    : std::runtime_error("Parser exception: " + str)
+    {
+        
+    }
+};
+
+class execution_exception : public std::runtime_error {
+public:
+    execution_exception(const std::string &str)
+    : std::runtime_error("Execution exception: " + str)
+    {
+        
+    }
+};
+
 #endif // FUZZER_EXCEPTIONS_H

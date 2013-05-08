@@ -70,6 +70,7 @@ public:
     // compound
 
     field_node *make_compound_field_node(fields_list *fields);
+    field_node *make_compound_field_node(fields_list *fields, const std::string &name);
 
     // template field
 

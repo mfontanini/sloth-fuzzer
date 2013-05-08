@@ -1,6 +1,7 @@
 %{
 
 #include <iostream>
+#include <map>
 #include "parser/nodes.h"
 #include "parser/syntax.h"
 #include "parser/syntax_parser.h"
@@ -15,6 +16,21 @@ extern "C" int yyerror(const char *);
 
 char string_buf[MAX_STR_CONST]; 
 char *string_buf_ptr;
+
+std::map<char, int> hex_map = { 
+    { 'a', 0x0a },
+    { 'b', 0x0b },
+    { 'c', 0x0c },
+    { 'd', 0x0d },
+    { 'e', 0x0e },
+    { 'f', 0x0f }
+};
+
+int convert_hex(char input) {
+    if(input < '9')
+        return input - '0';
+    return hex_map[tolower(input)];
+}
 
 #define CHECK_STRLEN \
     if(string_buf_ptr == string_buf + MAX_STR_CONST - 1) { \
@@ -39,6 +55,7 @@ char *string_buf_ptr;
 CHARACTER       [a-zA-Z_-]
 DIGIT           [0-9]
 NUMBER          {DIGIT}+
+HEX_DIGIT       ({DIGIT}|[abcdef])
 BRACES          ("{"|"}")
 PARENS          ("("|")")
 IDENTIFIER      {CHARACTER}({CHARACTER}|{DIGIT})*
@@ -66,6 +83,10 @@ OPERATOR        ("+"|"-"|"*"|"/")
     yylval.symbol = grammar_syntax_parser->make_string(string_buf, string_buf_ptr); 
     return STR_CONST;
 }
+<STR_LITERAL>"\\x"{HEX_DIGIT}{2}  { 
+    CHECK_STRLEN; 
+    *string_buf_ptr++ = ((convert_hex(yytext[2])) << 4) | convert_hex(yytext[3]); 
+}
 <STR_LITERAL>"\\n"  { CHECK_STRLEN; *string_buf_ptr++ = '\n'; }
 <STR_LITERAL>"\\b"  { CHECK_STRLEN; *string_buf_ptr++ = '\b'; }
 <STR_LITERAL>"\\f"  { CHECK_STRLEN; *string_buf_ptr++ = '\f'; }
@@ -88,7 +109,6 @@ OPERATOR        ("+"|"-"|"*"|"/")
     BEGIN(STR_LITERAL_ERR);
     return ERROR;
 }
-<STR_LITERAL>"\\x"{DIGIT}{2}  { CHECK_STRLEN; *string_buf_ptr++ = ((yytext[2] - '0') << 4) | (yytext[3] - '0'); }
 <STR_LITERAL>"\\\n"  { CHECK_STRLEN; *string_buf_ptr++ = '\n'; curr_lineno++; }
 <STR_LITERAL>"\\".   { CHECK_STRLEN; *string_buf_ptr++ = yytext[1]; }
 <STR_LITERAL>[^\\\n\"\0]+  { 

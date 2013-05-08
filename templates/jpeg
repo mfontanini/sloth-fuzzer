@@ -1,0 +1,17 @@
+templates {
+    frame {
+        block<2> = "\xff\xe0";
+        block<2> = 2 * size(main);
+        multi_block main = {
+            block<5> = "JFIF\x00";
+            block<2> = "\x01\x02";
+            block<2> = 0;
+            block<4>;
+            block<1> w;
+            block<1> h;
+            var_block<1, 2000> = 3 * w * h;
+        };
+    };
+};
+block<2> = "\xff\xd8";
+template<frame, 1, 7>;

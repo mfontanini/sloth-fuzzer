@@ -186,6 +186,19 @@ auto syntax_parser::make_compound_field_node(fields_list *fields) -> field_node*
     );
 }
 
+auto syntax_parser::make_compound_field_node(fields_list *fields, const std::string &name) -> field_node *
+{
+    auto id = mapper.find_register_field_name(name);
+    return node_alloc<field_node>(
+        [=](field_mapper &mapper) {
+            auto impl = make_unique< ::compound_field_impl>();
+            for(const auto &i : *fields)
+                impl->add_field(i->allocate(mapper));
+            return field(id, nullptr, std::move(impl));
+        }
+    );
+}
+
 // template field
 
 auto syntax_parser::make_template_field_node(const std::string &template_name, 

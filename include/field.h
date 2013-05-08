@@ -80,20 +80,10 @@ public:
     
     static identifier_type generate_id();
 private:
-    template<typename T>
-    struct type2type { };
-    
     static std::atomic<identifier_type> global_id;
     
-    double le_extract() const;
-    uint16_t extract(type2type<uint16_t>) const;
-    uint32_t extract(type2type<uint32_t>) const;
-    uint64_t extract(type2type<uint64_t>) const;
-    
-    void le_insert(double value);
-    void insert(uint16_t value);
-    void insert(uint32_t value);
-    void insert(uint64_t value);
+    double be_extract() const;
+    void be_insert(double value);
     
 
     unique_impl impl;

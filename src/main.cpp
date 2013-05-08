@@ -1,5 +1,6 @@
 #include <iostream>
 #include <random>
+#include <fstream>
 #include <algorithm>
 #include <sstream>
 #include "block_field.h"
@@ -17,6 +18,7 @@
 #include "generation_context.h"
 #include "template_field.h"
 #include "functions/misc.h"
+#include "executer.h"
 
 void test_parse() {
     std::string input = "templates { roberto = { block<4> = 0; block<4>; }; }; "
@@ -94,8 +96,31 @@ void test_template() {
     std::cout << std::endl;
 }
 
+field parse_file(const std::string &template_file)
+{
+    std::ifstream input_stream(template_file); 
+    syntax_parser parser;
+    parser.parse(input_stream);
+    return std::move(parser.get_root_field());
+}
+
+void run(const std::string &template_file, const std::string &cmd) 
+{
+    field root = parse_file(template_file);
+    executer exec(cmd);
+    generation_context ctx;
+    ctx.get_mapper().identify_fields(root);
+    topological_sorter sorter;
+    for(const auto &i : sorter.topological_sort(root)) {
+        const_cast<field&>(ctx.get_mapper().find_field(i)).prepare(ctx);
+        const_cast<field&>(ctx.get_mapper().find_field(i)).fill(ctx.get_mapper());
+    }
+    exec.execute(root, "/dev/shm/fuzzer");
+}
+
 int main() {
-    test_parse();
+    run("templates/jpeg", "/usr/bin/hexdump -C");
+    //test_parse();
     //test_template();
     /*auto filler = std::make_shared<value_filler>("ASD-carlos-jaskldjaskl");
     auto impl = make_unique<compound_field_impl>();

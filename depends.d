@@ -6,6 +6,12 @@ include/block_field.h:
 include/field_impl.h:
 
 include/utils.h:
+src/command_parser.o: src/command_parser.cpp include/command_parser.h \
+ include/exceptions.h
+
+include/command_parser.h:
+
+include/exceptions.h:
 src/compound_field.o: src/compound_field.cpp include/compound_field.h \
  include/field_impl.h include/utils.h include/field.h \
  include/field_filler.h include/exceptions.h
@@ -39,6 +45,23 @@ include/field_filler.h:
 include/field.h:
 
 include/exceptions.h:
+src/executer.o: src/executer.cpp include/executer.h \
+ include/command_parser.h include/exceptions.h include/field.h \
+ include/utils.h include/field_impl.h include/field_filler.h
+
+include/executer.h:
+
+include/command_parser.h:
+
+include/exceptions.h:
+
+include/field.h:
+
+include/utils.h:
+
+include/field_impl.h:
+
+include/field_filler.h:
 src/field.o: src/field.cpp include/field.h include/utils.h \
  include/field_impl.h include/field_filler.h include/field_impl.h \
  include/endianness.h include/exceptions.h include/field_mapper.h \
@@ -119,7 +142,8 @@ src/main.o: src/main.cpp include/block_field.h include/field_impl.h \
  include/parser/syntax_parser.h include/parser/nodes.h \
  include/field_filler.h include/utils.h include/multiptr_destructor.h \
  include/generation_context.h include/template_field.h \
- include/compound_field.h include/functions/misc.h
+ include/compound_field.h include/functions/misc.h include/executer.h \
+ include/command_parser.h
 
 include/block_field.h:
 
@@ -172,6 +196,10 @@ include/template_field.h:
 include/compound_field.h:
 
 include/functions/misc.h:
+
+include/executer.h:
+
+include/command_parser.h:
 src/template_field.o: src/template_field.cpp include/topological_sorter.h \
  include/field_impl.h include/utils.h include/template_field.h \
  include/compound_field.h include/field.h include/field_filler.h \

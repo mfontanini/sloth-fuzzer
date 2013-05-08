@@ -99,99 +99,34 @@ void field::set_value(double value)
     if(value == 0.0)
         std::fill(begin(), end(), 0);
     else
-        le_insert(value);
+        be_insert(value);
 }
 
 double field::get_value() const
 {
-    return le_extract();
+    return be_extract();
 }
 
-double field::le_extract() const
+double field::be_extract() const
 {
-    switch(size()) {
-        case sizeof(uint8_t):
-            return (*this)[0];
-        case sizeof(uint16_t):
-            return Endian::le_to_host(extract(type2type<uint16_t>()));
-        case sizeof(uint32_t):
-            return Endian::le_to_host(extract(type2type<uint32_t>()));
-        case sizeof(uint64_t):
-            return Endian::le_to_host(extract(type2type<uint64_t>()));
+    uint64_t val{};
+    int end = size() - 1, index = end;
+    while(index >= 0) {
+        val = val | ((*this)[index] << (end - index));
+        index--;
     }
-    throw invalid_field_size();
+    return val;
 }
 
-uint16_t field::extract(type2type<uint16_t>) const
-{
-    return (*this)[0] | 
-            (static_cast<uint32_t>((*this)[1]) << 8);
-}
 
-uint32_t field::extract(type2type<uint32_t>) const
+void field::be_insert(double value)
 {
-    return (*this)[0] | 
-            (static_cast<uint32_t>((*this)[1]) << 8) | 
-            (static_cast<uint32_t>((*this)[2]) << 16) | 
-            (static_cast<uint32_t>((*this)[3]) << 24);
-}
-
-uint64_t field::extract(type2type<uint64_t>) const
-{
-    return (*this)[0] |
-            (static_cast<uint64_t>((*this)[1]) << 8) | 
-            (static_cast<uint64_t>((*this)[2]) << 16) | 
-            (static_cast<uint64_t>((*this)[3]) << 24) |
-            (static_cast<uint64_t>((*this)[4]) << 32) |
-            (static_cast<uint64_t>((*this)[5]) << 40) |
-            (static_cast<uint64_t>((*this)[6]) << 48) |
-            (static_cast<uint64_t>((*this)[7]) << 56);
-}
-
-void field::le_insert(double value)
-{
-    switch(size()) {
-        case sizeof(uint8_t):
-            (*this)[0] = static_cast<uint8_t>(value);
-            break;
-        case sizeof(uint16_t):
-            insert(Endian::host_to_le<uint16_t>(value));
-            break;
-        case sizeof(uint32_t):
-            insert(Endian::host_to_le<uint32_t>(value));
-            break;
-        case sizeof(uint64_t):
-            insert(Endian::host_to_le<uint64_t>(value));
-            break;
-        default:
-            throw invalid_field_size();
+    uint64_t int_val = static_cast<uint64_t>(value);
+    int index = size() - 1;
+    while(index >= 0 && int_val != 0) {
+        (*this)[index--] = static_cast<uint8_t>(int_val) & 0xff;
+        int_val >>= 8;
     }
-}
-
-void field::insert(uint16_t value)
-{
-    (*this)[0] = value & 0xff;
-    (*this)[1] = (value >> 8) & 0xff;
-}
-
-void field::insert(uint32_t value)
-{
-    (*this)[0] = value & 0xff;
-    (*this)[1] = (value >> 8) & 0xff;
-    (*this)[2] = (value >> 16) & 0xff;
-    (*this)[3] = (value >> 24) & 0xff;
-}
-
-void field::insert(uint64_t value)
-{
-    (*this)[0] = value & 0xff;
-    (*this)[1] = (value >> 8) & 0xff;
-    (*this)[2] = (value >> 16) & 0xff;
-    (*this)[3] = (value >> 24) & 0xff;
-    (*this)[4] = (value >> 32) & 0xff;
-    (*this)[5] = (value >> 40) & 0xff;
-    (*this)[6] = (value >> 48) & 0xff;
-    (*this)[7] = (value >> 56) & 0xff;
 }
 
 void field::accept_visitor(const visitor_type &visitor) const

@@ -98,8 +98,8 @@ templates:
 ;
 
 template_def:
-    IDENTIFIER '=' '{' fields '}' ';' {
-        $$ = grammar_syntax_parser->make_template_def_node($4);
+    IDENTIFIER '{' fields '}' ';' {
+        $$ = grammar_syntax_parser->make_template_def_node($3);
         grammar_syntax_parser->add_template(*$1, $$);
     }
 ;
@@ -164,6 +164,10 @@ var_block:
 compound_field:
     COMPOUND_BLOCK '=' '{' fields '}' ';' {
         $$ = grammar_syntax_parser->make_compound_field_node($4);
+    } 
+    |
+    COMPOUND_BLOCK IDENTIFIER '=' '{' fields '}' ';' {
+        $$ = grammar_syntax_parser->make_compound_field_node($5, *$2);
     } 
 ;
 
