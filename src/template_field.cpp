@@ -19,14 +19,15 @@ void template_field_impl::prepare(generation_context &ctx)
     clear_children();
     for(auto i = size_t(); i < num_fields; ++i) {
         field f = template_field;
-        field_mapper mapper;
+        generation_context local_ctx;
+        field_mapper &mapper = local_ctx.get_mapper();
         mapper.identify_fields(f);
         for(const auto &id : unresolved)
             mapper.register_field(id, ctx.get_mapper().find_field(id));
         for(const auto &id : ordered) {
             auto &q = const_cast<field&>(mapper.find_field(id));
             q.prepare(ctx);
-            q.fill(mapper);
+            q.fill(local_ctx);
         }
         add_field(std::move(f));
     }

@@ -61,6 +61,11 @@ public:
     field_node *make_block_node(filler_node *filler, size_t size);
     field_node *make_block_node(filler_node *filler, size_t size, const std::string &name);
     
+    // bit field
+    
+    field_node *make_bitfield_node(filler_node *filler, size_t size);
+    field_node *make_bitfield_node(filler_node *filler, size_t size, const std::string &name);
+    
     // variable block
 
     field_node *make_variable_block_node(filler_node *filler, size_t min_size, size_t max_size);
@@ -71,6 +76,11 @@ public:
 
     field_node *make_compound_field_node(fields_list *fields);
     field_node *make_compound_field_node(fields_list *fields, const std::string &name);
+    
+    // compound bitfield
+
+    field_node *make_compound_bitfield_node(fields_list *fields);
+    field_node *make_compound_bitfield_node(fields_list *fields, const std::string &name);
 
     // template field
 

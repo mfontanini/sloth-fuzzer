@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "value_node.h"
 #include "field_mapper.h"
+#include "generation_context.h"
 
 // the Functor is probably a stateless class, so probably EBCO works here
 template<typename Functor>
@@ -19,8 +20,8 @@ public:
         
     }
     
-    double eval(const field_mapper& mapper) {
-        return (*this)(lhs->eval(mapper), rhs->eval(mapper));
+    double eval(generation_context &ctx) {
+        return (*this)(lhs->eval(ctx), rhs->eval(ctx));
     }
     
     dependents_type dependent_fields() const 
@@ -45,8 +46,8 @@ public:
         
     }
     
-    double eval(const field_mapper& mapper) {
-        return (*this)(node->eval(mapper));
+    double eval(generation_context &ctx) {
+        return (*this)(node->eval(ctx));
     }
     
     dependents_type dependent_fields() const 
@@ -65,8 +66,8 @@ public:
         
     }
     
-    double eval(const field_mapper& mapper) {
-        return mapper.find_field(id).get_value();
+    double eval(generation_context &ctx) {
+        return ctx.get_mapper().find_field(id).get_value();
     }
     
     dependents_type dependent_fields() const 

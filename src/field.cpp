@@ -88,10 +88,10 @@ void field::prepare(generation_context &context)
     impl->prepare(context);
 }
 
-void field::fill(const field_mapper &mapper) 
+void field::fill(generation_context &context) 
 {
     if(filler) 
-        filler->fill(*this, mapper);
+        filler->fill(*this, context);
 }
 
 void field::set_value(double value)
@@ -111,7 +111,7 @@ double field::be_extract() const
 {
     uint64_t val{};
     int end = size() - 1, index = end;
-    while(index >= 0) {
+    while(index >= 0 && end - index < sizeof(uint64_t)) {
         val = val | ((*this)[index] << (end - index));
         index--;
     }

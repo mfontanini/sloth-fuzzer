@@ -4,6 +4,7 @@
 #include "field_impl.h"
 
 class field_mapper;
+class generation_context;
 
 class value_node {
 public:
@@ -11,7 +12,7 @@ public:
     typedef field_impl::dependents_type dependents_type;
 
     virtual ~value_node() noexcept = default;
-    virtual double eval(const field_mapper&) = 0;
+    virtual double eval(generation_context &) = 0;
     virtual dependents_type dependent_fields() const {
         return { };
     }

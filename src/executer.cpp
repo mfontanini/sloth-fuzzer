@@ -20,7 +20,7 @@ executer::executer(const std::string &cmd)
     
 }
 
-auto executer::execute(const field &f, const std::string &output_file) -> execution_status
+auto executer::execute(const field &f, const std::string &output_file) -> exec_status
 {
     std::ofstream output(output_file, std::ios::binary);
     if(!output)
@@ -54,7 +54,7 @@ std::string signal_string(int code)
     return (iter == strings.end()) ? "Unknown signal" : iter->second;
 }
 
-auto executer::do_execute(const std::string &file) -> execution_status
+auto executer::do_execute(const std::string &file) -> exec_status
 {
     pid_t pid;
     if((pid = fork()) < 0) {
@@ -68,11 +68,11 @@ auto executer::do_execute(const std::string &file) -> execution_status
             if(WTERMSIG(status) == SIGUSR2) 
                 throw execution_exception("executing application failed");
             else {
-                return execution_status::killed_by_signal;
+                return exec_status::killed_by_signal;
             }
         }
         else
-            return execution_status::success;
+            return exec_status::success;
     }
     else {
         int null_fd = 0;//redirect_descriptors();
@@ -96,6 +96,6 @@ auto executer::do_execute(const std::string &file) -> execution_status
         exit(0);
     }
     // should never get here
-    return execution_status::failed;
+    return exec_status::failed;
 }
 #endif

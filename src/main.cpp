@@ -3,6 +3,7 @@
 #include <fstream>
 #include <algorithm>
 #include <sstream>
+#include <boost/filesystem.hpp>
 #include "block_field.h"
 #include "compound_field.h"
 #include "field.h"
@@ -20,7 +21,7 @@
 #include "functions/misc.h"
 #include "executer.h"
 
-void test_parse() {
+/*void test_parse() {
     std::string input = "templates { roberto = { block<4> = 0; block<4>; }; }; "
                         "block<4> roberto = 50 + 5 * carlos; "
                         "block<2> carlos = 4; "
@@ -54,17 +55,6 @@ void test_parse() {
         std::cout << (int)i;
     std::cout << std::endl;
     
-    /*root.accept_visitor([&](const field &f) { 
-        if(f.id() != root.id()) {
-            if(f.size() == 2 || f.size() == 4)
-                std::cout << f.id() << " - " << f.get_value() << std::endl; 
-            else {
-                for(const auto &i : f)
-                    std::cout << std::hex << (int)i;
-                std::cout << std::dec << std::endl;
-            }
-        }
-    });*/
     
 }
 
@@ -94,7 +84,7 @@ void test_template() {
     for(auto&& i : root)
         std::cout << (int)i;
     std::cout << std::endl;
-}
+}*/
 
 field parse_file(const std::string &template_file)
 {
@@ -106,20 +96,26 @@ field parse_file(const std::string &template_file)
 
 void run(const std::string &template_file, const std::string &cmd) 
 {
+    const std::string file_name = "/dev/shm/fuzzer";
     field root = parse_file(template_file);
     executer exec(cmd);
     generation_context ctx;
     ctx.get_mapper().identify_fields(root);
     topological_sorter sorter;
-    for(const auto &i : sorter.topological_sort(root)) {
-        const_cast<field&>(ctx.get_mapper().find_field(i)).prepare(ctx);
-        const_cast<field&>(ctx.get_mapper().find_field(i)).fill(ctx.get_mapper());
+    auto ordered = sorter.topological_sort(root);
+    while(true) {
+        for(const auto &i : ordered) {
+            const_cast<field&>(ctx.get_mapper().find_field(i)).prepare(ctx);
+            const_cast<field&>(ctx.get_mapper().find_field(i)).fill(ctx);
+        }
+        if(exec.execute(root, file_name) == executer::exec_status::killed_by_signal) {
+            boost::filesystem::rename(file_name, "/tmp/carlos");
+        }
     }
-    exec.execute(root, "/dev/shm/fuzzer");
 }
 
-int main() {
-    run("templates/jpeg", "/usr/bin/hexdump -C");
+int main(int argc, char *argv[]) {
+    run("templates/test", "/usr/bin/hexdump -C");
     //test_parse();
     //test_template();
     /*auto filler = std::make_shared<value_filler>("ASD-carlos-jaskldjaskl");

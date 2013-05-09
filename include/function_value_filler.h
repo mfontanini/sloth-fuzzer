@@ -11,7 +11,7 @@ public:
 
     function_value_filler(unique_value value);
 
-    void fill(field &f, const field_mapper &mapper);
+    void fill(field &f, generation_context &ctx);
     dependents_type dependent_fields() const;
 private:
     unique_value value;

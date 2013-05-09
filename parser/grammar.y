@@ -51,15 +51,15 @@ extern "C"
     const char *error_msg;
 }
 
-%token TEMPLATE 258 BLOCK 262 TEMPLATES 261 COMPOUND_BLOCK 263 VAR_BLOCK 264
+%token TEMPLATE 258 BLOCK 262 TEMPLATES 261 COMPOUND_BLOCK 263 VAR_BLOCK 264 COMPOUND_BITFIELD 267 BITFIELD 268
 %token '<' '>' ';' '+' '-' '/' '*' '{' '}' '(' ')' ','
 %token <symbol> IDENTIFIER 259 STR_CONST 265
 %token <int_val> INT_CONST 260
 
-%type <ast_field>  field block_field compound_field var_block template_field
+%type <ast_field>  field block_field compound_field var_block template_field compound_bitfield bitfield
 %type <ast_template_def> template_def
 %type <ast_script> script
-%type <ast_fields> fields templates
+%type <ast_fields> fields templates bitfields
 %type <ast_value_node> expression expression_func
 %type <ast_filler> filler filler_function
 
@@ -123,6 +123,8 @@ field:
     var_block { $$ = $1; } 
     | 
     template_field { $$ = $1; }
+    |
+    compound_bitfield { $$ = $1; }
 ;
 
 block_field: 
@@ -169,6 +171,45 @@ compound_field:
     COMPOUND_BLOCK IDENTIFIER '=' '{' fields '}' ';' {
         $$ = grammar_syntax_parser->make_compound_field_node($5, *$2);
     } 
+;
+
+compound_bitfield:
+    COMPOUND_BITFIELD '=' '{' bitfields '}' ';' {
+        $$ = grammar_syntax_parser->make_compound_bitfield_node($4);
+    } 
+    |
+    COMPOUND_BITFIELD IDENTIFIER '=' '{' bitfields '}' ';' {
+        $$ = grammar_syntax_parser->make_compound_bitfield_node($5, *$2);
+    } 
+;
+
+bitfields:
+    bitfield {
+        $$ = grammar_syntax_parser->make_fields_list();
+        $$->push_back($1);
+    }
+    |
+    bitfields bitfield {
+        $1->push_back($2);
+    }
+;
+
+bitfield:
+    BITFIELD '<' INT_CONST '>' IDENTIFIER '=' filler ';' { 
+        $$ = grammar_syntax_parser->make_bitfield_node($7, $3, *$5);  
+    }
+    |
+    BITFIELD '<' INT_CONST '>' IDENTIFIER ';' { 
+        $$ = grammar_syntax_parser->make_bitfield_node(nullptr, $3, *$5); 
+    }
+    |
+    BITFIELD '<' INT_CONST '>' '=' filler ';' { 
+        $$ = grammar_syntax_parser->make_bitfield_node($6, $3);
+    }
+    |
+    BITFIELD '<' INT_CONST '>' ';' { 
+        $$ = grammar_syntax_parser->make_bitfield_node(nullptr, $3); 
+    }
 ;
 
 template_field:

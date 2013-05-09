@@ -12,7 +12,7 @@ public:
     typedef field_impl::dependents_type dependents_type;
 
     virtual ~field_filler() = default;
-    virtual void fill(field &, const field_mapper&) = 0;
+    virtual void fill(field &, generation_context &) = 0;
     virtual dependents_type dependent_fields() const {
         return { };
     }

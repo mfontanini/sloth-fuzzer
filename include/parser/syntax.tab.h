@@ -42,6 +42,8 @@
      TEMPLATES = 261,
      COMPOUND_BLOCK = 263,
      VAR_BLOCK = 264,
+     COMPOUND_BITFIELD = 267,
+     BITFIELD = 268,
      IDENTIFIER = 259,
      STR_CONST = 265,
      INT_CONST = 260
@@ -70,7 +72,7 @@ typedef union YYSTYPE
 
 
 /* Line 2068 of yacc.c  */
-#line 74 "parser/grammar-output.h"
+#line 76 "parser/grammar-output.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

@@ -130,6 +130,8 @@ OPERATOR        ("+"|"-"|"*"|"/")
 "templates"     { return TEMPLATES; }
 "template"      { return TEMPLATE; }
 "var_block"     { return VAR_BLOCK; }
+"bitfield"      { return BITFIELD; }
+"multi_bit"     { return COMPOUND_BITFIELD; }
 "block"         { return BLOCK; }
 "multi_block"   { return COMPOUND_BLOCK; }
 "<"             { return yytext[0]; }

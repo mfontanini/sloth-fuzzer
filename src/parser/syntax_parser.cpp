@@ -7,6 +7,7 @@
 #include "field.h"
 #include "functions/random.h"
 #include "block_field.h"
+#include "bitfield.h"
 #include "compound_field.h"
 #include "template_field.h"
 #include "variable_block_field.h"
@@ -23,6 +24,10 @@ extern "C" int yyparse();
 
 field::filler_type default_filler() {
     return make_unique<random_function>();
+}
+
+field::filler_type default_bit_filler() {
+    return make_unique<bitrandom_function>();
 }
 
 syntax_parser::syntax_parser()
@@ -139,6 +144,35 @@ auto syntax_parser::make_block_node(filler_node *filler, size_t size,
     );
 }
 
+// bitfield
+
+auto syntax_parser::make_bitfield_node(filler_node *filler, size_t size) -> field_node *
+{
+    return node_alloc<field_node>(
+        [=](field_mapper &mapper) {
+            return field::from_impl<bitfield_impl>(
+                filler ? filler->allocate(mapper) : default_bit_filler(), 
+                size
+            );
+        }
+    );
+}
+
+auto syntax_parser::make_bitfield_node(filler_node *filler, size_t size, 
+  const std::string &name) -> field_node *
+{
+    auto id = mapper.find_register_field_name(name);
+    return node_alloc<field_node>(
+        [=](field_mapper &mapper) {
+            return field::from_impl<bitfield_impl>(
+                id, 
+                filler ? filler->allocate(mapper) : default_bit_filler(), 
+                size
+            );
+        }
+    );
+}
+
 // variable block
 
 auto syntax_parser::make_variable_block_node(filler_node *filler, 
@@ -192,6 +226,33 @@ auto syntax_parser::make_compound_field_node(fields_list *fields, const std::str
     return node_alloc<field_node>(
         [=](field_mapper &mapper) {
             auto impl = make_unique< ::compound_field_impl>();
+            for(const auto &i : *fields)
+                impl->add_field(i->allocate(mapper));
+            return field(id, nullptr, std::move(impl));
+        }
+    );
+}
+
+// compound bitfield
+
+auto syntax_parser::make_compound_bitfield_node(fields_list *fields) -> field_node*
+{
+    return node_alloc<field_node>(
+        [=](field_mapper &mapper) {
+            auto impl = make_unique< ::compound_bitfield_impl>();
+            for(const auto &i : *fields)
+                impl->add_field(i->allocate(mapper));
+            return field(nullptr, std::move(impl));
+        }
+    );
+}
+
+auto syntax_parser::make_compound_bitfield_node(fields_list *fields, const std::string &name) -> field_node *
+{
+    auto id = mapper.find_register_field_name(name);
+    return node_alloc<field_node>(
+        [=](field_mapper &mapper) {
+            auto impl = make_unique< ::compound_bitfield_impl>();
             for(const auto &i : *fields)
                 impl->add_field(i->allocate(mapper));
             return field(id, nullptr, std::move(impl));

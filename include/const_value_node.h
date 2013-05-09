@@ -9,7 +9,7 @@
 class const_value_node : public value_node {
 public:
     const_value_node(float value);
-    double eval(const field_mapper&);
+    double eval(generation_context &ctx);
 private:
     float value;
 };
@@ -17,7 +17,7 @@ private:
 class const_string_node : public field_filler {
 public:
     const_string_node(std::string value);
-    void fill(field &f, const field_mapper&);
+    void fill(field &f, generation_context &ctx);
 private:
     std::string value;
 };

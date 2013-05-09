@@ -8,16 +8,16 @@ class field;
 
 class executer {
 public:
-    enum class execution_status {
+    enum class exec_status {
         success,
         failed,
         killed_by_signal
     };
     executer(const std::string &cmd);
     
-    execution_status execute(const field &f, const std::string &output_file);
+    exec_status execute(const field &f, const std::string &output_file);
 private:
-    execution_status do_execute(const std::string &file);
+    exec_status do_execute(const std::string &file);
     
     command_parser cmd_template;
 };

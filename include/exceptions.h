@@ -38,6 +38,14 @@ public:
     }
 };
 
+class not_implemented : public std::exception {
+public:
+    const char *what() const throw() {
+        return "not implemented";
+    }
+};
+
+
 class parser_exception : public std::runtime_error {
 public:
     parser_exception(const std::string &str)

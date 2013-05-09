@@ -47,7 +47,7 @@ public:
     // the number of children fields 
     size_t field_count() const;
     void prepare(generation_context &context);
-    void fill(const field_mapper &mapper);
+    void fill(generation_context &context);
     
     void accept_visitor(const visitor_type &visitor) const;
     

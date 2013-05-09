@@ -12,7 +12,7 @@ auto function_value_filler::dependent_fields() const -> dependents_type
     return value->dependent_fields();
 }
 
-void function_value_filler::fill(field &f, const field_mapper &mapper)
+void function_value_filler::fill(field &f, generation_context &ctx)
 {
-    f.set_value(value->eval(mapper));
+    f.set_value(value->eval(ctx));
 }

@@ -10,7 +10,7 @@ const_value_node::const_value_node(float value)
     
 }
 
-double const_value_node::eval(const field_mapper&) {
+double const_value_node::eval(generation_context &) {
     return value;
 }
 
@@ -21,7 +21,7 @@ const_string_node::const_string_node(std::string value)
     
 }
 
-void const_string_node::fill(field &f, const field_mapper&) 
+void const_string_node::fill(field &f, generation_context &) 
 {
     if(f.size() < value.size())
         throw invalid_field_size();

@@ -3,7 +3,7 @@
 
 #include "field.h"
 #include "value_node.h"
-#include "field_mapper.h"
+#include "generation_context.h"
 
 template<typename Concrete>
 class unary_field_function : public value_node {
@@ -14,9 +14,9 @@ public:
         
     }
     
-    double eval(const field_mapper& mapper)
+    double eval(generation_context &ctx)
     {
-        return static_cast<Concrete&>(*this).apply(mapper.find_field(id));
+        return static_cast<Concrete&>(*this).apply(ctx.get_mapper().find_field(id));
     }
 
     dependents_type dependent_fields() const
@@ -38,9 +38,9 @@ public:
     {
         
     }
-    void fill(field &f, const field_mapper& mapper)
+    void fill(field &f, generation_context &ctx)
     {
-        static_cast<Concrete&>(*this).apply(mapper.find_field(id), f);
+        static_cast<Concrete&>(*this).apply(ctx.get_mapper().find_field(id), f);
     }
 
     dependents_type dependent_fields() const
