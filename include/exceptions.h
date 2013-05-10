@@ -45,6 +45,12 @@ public:
     }
 };
 
+class value_too_large : public std::exception {
+public:
+    const char *what() const throw() {
+        return "value too large";
+    }
+};
 
 class parser_exception : public std::runtime_error {
 public:

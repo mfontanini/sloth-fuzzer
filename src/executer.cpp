@@ -64,7 +64,7 @@ auto executer::do_execute(const std::string &file) -> exec_status
         int status = 0;
         waitpid(pid, &status, 0);
         /* Child was terminated by a signal. */
-        if(!WIFEXITED(status) && WIFSIGNALED(status)) {
+        if(!WIFEXITED(status) && WIFSIGNALED(status) && WTERMSIG(status) != SIGINT) {
             if(WTERMSIG(status) == SIGUSR2) 
                 throw execution_exception("executing application failed");
             else {

@@ -99,34 +99,12 @@ void field::set_value(double value)
     if(value == 0.0)
         std::fill(begin(), end(), 0);
     else
-        be_insert(value);
+        impl->set_value(value);
 }
 
 double field::get_value() const
 {
-    return be_extract();
-}
-
-double field::be_extract() const
-{
-    uint64_t val{};
-    int end = size() - 1, index = end;
-    while(index >= 0 && end - index < sizeof(uint64_t)) {
-        val = val | ((*this)[index] << (end - index));
-        index--;
-    }
-    return val;
-}
-
-
-void field::be_insert(double value)
-{
-    uint64_t int_val = static_cast<uint64_t>(value);
-    int index = size() - 1;
-    while(index >= 0 && int_val != 0) {
-        (*this)[index--] = static_cast<uint8_t>(int_val) & 0xff;
-        int_val >>= 8;
-    }
+    return impl->get_value();
 }
 
 void field::accept_visitor(const visitor_type &visitor) const

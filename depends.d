@@ -1,6 +1,7 @@
 src/bitfield.o: src/bitfield.cpp include/bitfield.h include/field_impl.h \
  include/utils.h include/field.h include/field_filler.h \
- include/block_field.h include/utils.h include/exceptions.h
+ include/block_field.h include/exceptions.h include/utils.h \
+ include/exceptions.h
 
 include/bitfield.h:
 
@@ -13,6 +14,8 @@ include/field.h:
 include/field_filler.h:
 
 include/block_field.h:
+
+include/exceptions.h:
 
 include/utils.h:
 
@@ -99,6 +102,11 @@ include/field.h:
 include/generation_context.h:
 
 include/field_mapper.h:
+src/field_impl.o: src/field_impl.cpp include/field_impl.h include/utils.h
+
+include/field_impl.h:
+
+include/utils.h:
 src/field_mapper.o: src/field_mapper.cpp include/field_mapper.h \
  include/field.h include/utils.h include/field_impl.h \
  include/field_filler.h
@@ -368,7 +376,7 @@ src/parser/syntax_parser.o: src/parser/syntax_parser.cpp \
  include/compound_field.h include/exceptions.h include/functions/md5.h \
  include/unary_field_function.h include/functions/random.h \
  include/block_field.h include/bitfield.h include/block_field.h \
- include/template_field.h include/compound_field.h \
+ include/exceptions.h include/template_field.h include/compound_field.h \
  include/variable_block_field.h include/function_value_filler.h \
  include/const_value_node.h include/functions/misc.h
 
@@ -417,6 +425,8 @@ include/block_field.h:
 include/bitfield.h:
 
 include/block_field.h:
+
+include/exceptions.h:
 
 include/template_field.h:
 

@@ -216,6 +216,14 @@ template_field:
     TEMPLATE '<' IDENTIFIER ',' INT_CONST ',' INT_CONST '>' ';' {
         $$ = grammar_syntax_parser->make_template_field_node(*$3, $5, $7);
     }
+    |
+    TEMPLATE '<' IDENTIFIER ',' INT_CONST '>' ';' {
+        $$ = grammar_syntax_parser->make_template_field_node(*$3, $5, $5);
+    }
+    |
+    TEMPLATE '<' IDENTIFIER '>' ';' {
+        $$ = grammar_syntax_parser->make_template_field_node(*$3, 1, 1);
+    }
 ;
 
 filler:

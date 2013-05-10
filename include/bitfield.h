@@ -6,6 +6,7 @@
 #include "field_impl.h"
 #include "field.h"
 #include "block_field.h"
+#include "exceptions.h"
 
 class compound_bitfield_impl : public clonable_field_impl<compound_bitfield_impl> {
 public:
@@ -26,5 +27,27 @@ private:
 };
 
 typedef generic_block_field_impl<std::vector<bool>> bitfield_impl;
+
+template<>
+inline void generic_block_field_impl<std::vector<bool>>::set_value(double value)
+{
+    uint64_t value_int = value;
+    for(auto iter = data.rbegin(); iter != data.rend(); ++iter) {
+        *iter = value_int & 1;
+        value_int >>= 1;
+    }
+    if(value_int > 0)
+        throw value_too_large();
+}
+
+template<>
+inline double generic_block_field_impl<std::vector<bool>>::get_value() const
+{
+    uint64_t value_int{};
+    for(auto iter = data.rbegin(); iter != data.rend(); ++iter) {
+        value_int = (value_int << 1) | static_cast<bool>(*iter);
+    }
+    return value_int;
+}
 
 #endif

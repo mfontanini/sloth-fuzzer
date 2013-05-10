@@ -82,9 +82,6 @@ public:
 private:
     static std::atomic<identifier_type> global_id;
     
-    double be_extract() const;
-    void be_insert(double value);
-    
 
     unique_impl impl;
     filler_type filler;
