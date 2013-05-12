@@ -15,7 +15,6 @@ extern syntax_parser* grammar_syntax_parser;
 
 void yyerror(const char *s)
 {
-std::cout << BLOCK << std::endl;
     extern int curr_lineno;
 
     std::cerr << "Line " << curr_lineno << ": " 
@@ -46,12 +45,12 @@ extern "C"
     grammar::script* ast_script;
     grammar::template_def_node* ast_template_def;
     std::vector<grammar::field_node*> *ast_fields;
-    int int_val;
+    uint64_t int_val;
     std::string *symbol;
     const char *error_msg;
 }
 
-%token TEMPLATE 258 BLOCK 262 TEMPLATES 261 COMPOUND_BLOCK 263 VAR_BLOCK 264 COMPOUND_BITFIELD 267 BITFIELD 268
+%token TEMPLATE 258 BLOCK 262 TEMPLATES 261 COMPOUND_BLOCK 263 VAR_BLOCK 264 COMPOUND_BITFIELD 267 BITFIELD 268 STR_BLOCK 269
 %token '<' '>' ';' '+' '-' '/' '*' '{' '}' '(' ')' ','
 %token <symbol> IDENTIFIER 259 STR_CONST 265
 %token <int_val> INT_CONST 260
@@ -143,6 +142,21 @@ block_field:
     BLOCK '<' INT_CONST '>' ';' { 
         $$ = grammar_syntax_parser->make_block_node(nullptr, $3); 
     }
+    |
+    STR_BLOCK '=' STR_CONST ';' {
+        $$ = grammar_syntax_parser->make_block_node(
+            grammar_syntax_parser->make_const_string_node(*$3), 
+            $3->size()
+        );
+    }
+    |
+    STR_BLOCK IDENTIFIER '=' STR_CONST ';' {
+        $$ = grammar_syntax_parser->make_block_node(
+            grammar_syntax_parser->make_const_string_node(*$4), 
+            $4->size(),
+            *$2
+        );
+    }
 ;
 
 var_block:
@@ -164,22 +178,22 @@ var_block:
 ;
 
 compound_field:
-    COMPOUND_BLOCK '=' '{' fields '}' ';' {
-        $$ = grammar_syntax_parser->make_compound_field_node($4);
+    COMPOUND_BLOCK '{' fields '}' ';' {
+        $$ = grammar_syntax_parser->make_compound_field_node($3);
     } 
     |
-    COMPOUND_BLOCK IDENTIFIER '=' '{' fields '}' ';' {
-        $$ = grammar_syntax_parser->make_compound_field_node($5, *$2);
+    COMPOUND_BLOCK IDENTIFIER '{' fields '}' ';' {
+        $$ = grammar_syntax_parser->make_compound_field_node($4, *$2);
     } 
 ;
 
 compound_bitfield:
-    COMPOUND_BITFIELD '=' '{' bitfields '}' ';' {
-        $$ = grammar_syntax_parser->make_compound_bitfield_node($4);
+    COMPOUND_BITFIELD '{' bitfields '}' ';' {
+        $$ = grammar_syntax_parser->make_compound_bitfield_node($3);
     } 
     |
-    COMPOUND_BITFIELD IDENTIFIER '=' '{' bitfields '}' ';' {
-        $$ = grammar_syntax_parser->make_compound_bitfield_node($5, *$2);
+    COMPOUND_BITFIELD IDENTIFIER '{' bitfields '}' ';' {
+        $$ = grammar_syntax_parser->make_compound_bitfield_node($4, *$2);
     } 
 ;
 
@@ -258,6 +272,10 @@ expression:
     |
     IDENTIFIER { 
         $$ = grammar_syntax_parser->make_node_value_node(*$1);
+    }
+    |
+    '(' expression ')' {
+        $$ = $2;
     }
     |
     expression_func '+' expression_func {

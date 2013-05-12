@@ -97,7 +97,7 @@ public:
     
     // stuff
     
-    value_node *make_const_value_node(float f);
+    value_node *make_const_value_node(double f);
     filler_node *make_const_string_node(const std::string &str);
     value_node *make_node_value_node(const std::string &name); 
     filler_node *make_node_filler_node(const std::string &field_name, 

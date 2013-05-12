@@ -31,7 +31,8 @@ enum fuzzer_identifiers {
     STR_CONST,
     ERROR,
     COMPOUND_BITFIELD,
-    BITFIELD
+    BITFIELD,
+    STR_BLOCK
 };
 #endif
 

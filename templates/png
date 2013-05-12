@@ -1,0 +1,24 @@
+str_block = "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a";
+# IHDR
+block<4> = 13;
+multi_block ihdr {
+    block<4> = "IHDR";
+    block<13>;
+};
+block<4> = crc(ihdr);
+
+#IDATA
+block<4> = size(data);
+multi_block idat {
+    block<4> = "IDAT";
+    var_block<1, 2000> data;
+};
+block<4> = crc(idat);
+
+# IEND
+block<4> = 0;
+multi_block iend {
+    
+    block<4> = "IEND";
+};
+block<4> = crc(iend);

@@ -1,0 +1,20 @@
+templates {
+    header {
+        multi_bit {
+            bitfield<12> = 4095;
+            bitfield<1> = 1; # version
+            bitfield<2> = 1; # layer
+            bitfield<1>;
+            bitfield<4>; # bitrate
+            bitfield<2>; # frequency
+            bitfield<2>; # pad pib + priv bit
+            bitfield<2> = 1; # mode(join stereo)
+            bitfield<2>; # mode extension
+            bitfield<2>; # copy + original
+            bitfield<2> = 0; # emphasis
+        };
+        var_block<0, 2000>; # data
+    };
+};
+block<4> = 0xdeadbeef;
+#template<header, 1, 10>;

@@ -3,8 +3,10 @@
 #include "parser/syntax_parser.h"
 #include "compound_field.h"
 #include "exceptions.h"
-#include "functions/md5.h"
 #include "field.h"
+#include "functions/md5.h"
+#include "functions/misc.h"
+#include "functions/crc.h"
 #include "functions/random.h"
 #include "block_field.h"
 #include "bitfield.h"
@@ -13,10 +15,10 @@
 #include "variable_block_field.h"
 #include "function_value_filler.h"
 #include "const_value_node.h"
-#include "functions/misc.h"
+
 
 std::istream *istr = nullptr;
-int curr_lineno = 0;
+int curr_lineno;
 syntax_parser* grammar_syntax_parser = nullptr;
 
 
@@ -52,6 +54,14 @@ syntax_parser::syntax_parser()
             });
         }
     );
+    register_value_function(
+        "crc", 
+        [&](identifier_type id) {
+            return node_alloc<value_node>([=](field_mapper &) {
+                return make_unique<crc32_function>(id); 
+            });
+        }
+    );
 }
 
 void syntax_parser::parse(const std::string &file_name)
@@ -64,6 +74,7 @@ void syntax_parser::parse(std::istream &input)
 {
     istr = &input;
     grammar_syntax_parser = this;
+    curr_lineno = 1;
     
     if(yyparse() != 0)        
         throw parse_error();
@@ -299,7 +310,7 @@ auto syntax_parser::make_fields_list() -> fields_list *
 
 // stuff
 
-auto syntax_parser::make_const_value_node(float f) -> value_node *
+auto syntax_parser::make_const_value_node(double f) -> value_node *
 {
     return node_alloc<value_node>(
         [=](field_mapper &) {

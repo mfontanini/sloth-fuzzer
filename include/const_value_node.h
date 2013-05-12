@@ -8,10 +8,10 @@
 
 class const_value_node : public value_node {
 public:
-    const_value_node(float value);
+    const_value_node(double value);
     double eval(generation_context &ctx);
 private:
-    float value;
+    double value;
 };
 
 class const_string_node : public field_filler {

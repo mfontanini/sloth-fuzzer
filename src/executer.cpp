@@ -5,30 +5,16 @@
     #include <unistd.h>
     #include <errno.h>
 #endif // WIN32
-#include <fstream>
-#include <iostream> // borrame
 #include <tuple>
 #include <map>
 #include <algorithm>
 #include "executer.h"
-#include "exceptions.h"
 #include "field.h"
 
 executer::executer(const std::string &cmd)
 : cmd_template(cmd)
 {
     
-}
-
-auto executer::execute(const field &f, const std::string &output_file) -> exec_status
-{
-    std::ofstream output(output_file, std::ios::binary);
-    if(!output)
-        throw file_open_exception();
-    for(auto &&i : f)
-        output << i;
-    output.close();
-    return do_execute(output_file);
 }
 
 #ifndef WIN32
@@ -75,7 +61,7 @@ auto executer::do_execute(const std::string &file) -> exec_status
             return exec_status::success;
     }
     else {
-        int null_fd = 0;//redirect_descriptors();
+        int null_fd = redirect_descriptors();
         std::string app;
         command_parser::arguments_type args;
         std::tie(app, args) = cmd_template.generate_template(file);

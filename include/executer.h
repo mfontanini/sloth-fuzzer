@@ -2,7 +2,11 @@
 #define FUZZER_EXECUTER_H
 
 #include <string>
+#include <algorithm>
+#include <fstream>
+#include <cstdint>
 #include "command_parser.h"
+#include "exceptions.h"
 
 class field;
 
@@ -15,7 +19,16 @@ public:
     };
     executer(const std::string &cmd);
     
-    exec_status execute(const field &f, const std::string &output_file);
+    template<typename ForwardIterator>
+    exec_status execute(ForwardIterator start, ForwardIterator end, const std::string &output_file)
+    {
+        std::ofstream output(output_file, std::ios::binary);
+        if(!output)
+            throw file_open_exception();
+        std::for_each(start, end, [&](uint8_t i) { output << i; });
+        output.close();
+        return do_execute(output_file);
+    }
 private:
     exec_status do_execute(const std::string &file);
     

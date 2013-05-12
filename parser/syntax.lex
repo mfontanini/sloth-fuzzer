@@ -27,7 +27,7 @@ std::map<char, int> hex_map = {
 };
 
 int convert_hex(char input) {
-    if(input < '9')
+    if(input <= '9')
         return input - '0';
     return hex_map[tolower(input)];
 }
@@ -127,33 +127,36 @@ OPERATOR        ("+"|"-"|"*"|"/")
 <STR_LITERAL_ERR>\\.        // Consume
 <STR_LITERAL_ERR>[^\"\\\n]    // Consume
 
-"templates"     { return TEMPLATES; }
-"template"      { return TEMPLATE; }
-"var_block"     { return VAR_BLOCK; }
-"bitfield"      { return BITFIELD; }
-"multi_bit"     { return COMPOUND_BITFIELD; }
-"block"         { return BLOCK; }
-"multi_block"   { return COMPOUND_BLOCK; }
-"<"             { return yytext[0]; }
-">"             { return yytext[0]; }
-";"             { return yytext[0]; }
-","             { return yytext[0]; }
-"="             { return yytext[0]; }
-{BRACES}        { return yytext[0]; }
-{PARENS}        { return yytext[0]; }
-{OPERATOR}      { return yytext[0]; }
-{NUMBER}        { 
+"templates"         { return TEMPLATES; }
+"template"          { return TEMPLATE; }
+"str_block"         { return STR_BLOCK; }
+"var_block"         { return VAR_BLOCK; }
+"bitfield"          { return BITFIELD; }
+"multi_bit"         { return COMPOUND_BITFIELD; }
+"block"             { return BLOCK; }
+"multi_block"       { return COMPOUND_BLOCK; }
+"<"                 { return yytext[0]; }
+">"                 { return yytext[0]; }
+";"                 { return yytext[0]; }
+","                 { return yytext[0]; }
+"="                 { return yytext[0]; }
+{BRACES}            { return yytext[0]; }
+{PARENS}            { return yytext[0]; }
+{OPERATOR}          { return yytext[0]; }
+"0x"{HEX_DIGIT}+    { 
+    yylval.int_val = strtol(yytext + 2, nullptr, 16); 
+    return INT_CONST;
+}
+{NUMBER}            { 
     yylval.int_val = atoi(yytext); 
     return INT_CONST; 
 }
-{IDENTIFIER}    { 
+{IDENTIFIER}        { 
     yylval.symbol = grammar_syntax_parser->make_string(yytext); 
     return IDENTIFIER; 
 }
-[ \t\f\v\r]     // consume whitespace
-\n              { curr_lineno++; }
-.               { 
-    yyterminate();
-}
+[ \t\f\v\r]         // consume whitespace
+\n                  { curr_lineno++; }
+.                   { yyterminate(); }
 
 %%

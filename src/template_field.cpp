@@ -1,4 +1,5 @@
 #include <set>
+#include <ctime>
 #include "topological_sorter.h"
 #include "template_field.h"
 #include "generation_context.h"
@@ -19,7 +20,7 @@ void template_field_impl::prepare(generation_context &ctx)
     clear_children();
     for(auto i = size_t(); i < num_fields; ++i) {
         field f = template_field;
-        generation_context local_ctx;
+        generation_context local_ctx(std::time(0) ^ reinterpret_cast<time_t>(&f) ^ i);
         field_mapper &mapper = local_ctx.get_mapper();
         mapper.identify_fields(f);
         for(const auto &id : unresolved)

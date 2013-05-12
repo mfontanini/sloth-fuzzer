@@ -6,7 +6,9 @@
 
 class generation_context {
 public:
-    typedef std::random_device random_generator;
+    typedef std::mt19937 random_generator;
+
+    generation_context(random_generator::result_type seed);
 
     field_mapper &get_mapper();
     const field_mapper &get_mapper() const;

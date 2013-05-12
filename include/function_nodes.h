@@ -78,11 +78,11 @@ private:
     field::identifier_type id;
 };
 
-typedef binary_function_node<std::plus<float>> plus_function_node;
-typedef binary_function_node<std::minus<float>> minus_function_node;
-typedef binary_function_node<std::multiplies<float>> multiplies_function_node;
-typedef binary_function_node<std::divides<float>> divides_function_node;
-typedef binary_function_node<std::modulus<float>> modulus_function_node;
-typedef unary_function_node<std::negate<float>> negate_function_node;
+typedef binary_function_node<std::plus<double>> plus_function_node;
+typedef binary_function_node<std::minus<double>> minus_function_node;
+typedef binary_function_node<std::multiplies<double>> multiplies_function_node;
+typedef binary_function_node<std::divides<double>> divides_function_node;
+typedef binary_function_node<std::modulus<double>> modulus_function_node;
+typedef unary_function_node<std::negate<double>> negate_function_node;
 
 #endif // FUZZER_FUNCTION_NODES_H

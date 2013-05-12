@@ -4,7 +4,7 @@
 #include "exceptions.h"
 
 
-const_value_node::const_value_node(float value)
+const_value_node::const_value_node(double value)
 : value(value)
 {
     

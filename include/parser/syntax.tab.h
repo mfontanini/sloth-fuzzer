@@ -44,6 +44,7 @@
      VAR_BLOCK = 264,
      COMPOUND_BITFIELD = 267,
      BITFIELD = 268,
+     STR_BLOCK = 269,
      IDENTIFIER = 259,
      STR_CONST = 265,
      INT_CONST = 260
@@ -57,7 +58,7 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 42 "parser/grammar.y"
+#line 41 "parser/grammar.y"
 
     grammar::field_node* ast_field;
     grammar::filler_node* ast_filler;
@@ -65,14 +66,14 @@ typedef union YYSTYPE
     grammar::script* ast_script;
     grammar::template_def_node* ast_template_def;
     std::vector<grammar::field_node*> *ast_fields;
-    int int_val;
+    uint64_t int_val;
     std::string *symbol;
     const char *error_msg;
 
 
 
 /* Line 2068 of yacc.c  */
-#line 76 "parser/grammar-output.h"
+#line 77 "parser/grammar-output.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
