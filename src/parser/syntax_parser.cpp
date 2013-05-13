@@ -82,6 +82,7 @@ void syntax_parser::parse(std::istream &input)
         throw parse_error();
     grammar_syntax_parser = nullptr;
     istr = nullptr;
+    script_root->check_constraints();
 }
 
 void syntax_parser::add_template(std::string name, grammar::template_def_node *node)

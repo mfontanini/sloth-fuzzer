@@ -70,4 +70,13 @@ public:
     }
 };
 
+class ast_field_too_small : public std::runtime_error {
+public:
+    ast_field_too_small(const std::string &node, const std::string &content)
+    : std::runtime_error("Field " + node + " too small to hold: \"" + content + "\"")
+    {
+        
+    }
+};
+
 #endif // FUZZER_EXCEPTIONS_H

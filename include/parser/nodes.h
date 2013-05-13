@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <functional>
+#include <algorithm>
 #include <vector>
 #include <utility>
 #include <string>
@@ -10,9 +11,9 @@
 #include "field.h"
 #include "field_mapper.h"
 #include "function_nodes.h"
+#include "bitfield.h"
+#include "compound_field.h"
 #include "utils.h"
-
-class syntax_parser;
 
 namespace grammar {
 template<typename Ret, typename... Args>
@@ -40,10 +41,8 @@ class field_node;
 typedef std::vector<field_node*> fields_list;
 
 struct script {
-    void add_field_node(field_node *f) 
-    {
-        fields.push_back(f);
-    }
+    void add_field_node(field_node *f);
+    void check_constraints() const;
 
     fields_list fields;
 };
@@ -122,8 +121,9 @@ public:
     typedef field::filler_type return_type;
 
     virtual ~filler_node() = default;
-
+    
     virtual return_type allocate(field_mapper &mapper) const = 0;
+    virtual void check_constraints(const field_node &f) const = 0;
 };
 
 class const_string_node : public filler_node {
@@ -131,6 +131,7 @@ public:
     const_string_node(std::string value);
     
     return_type allocate(field_mapper &mapper) const;
+    void check_constraints(const field_node &f) const;
 private:
     std::string value;
 };
@@ -140,6 +141,7 @@ public:
     function_value_filler_node(value_node *value);
     
     return_type allocate(field_mapper &mapper) const;
+    void check_constraints(const field_node &f) const;
 private:
     value_node* value;
 };
@@ -156,6 +158,11 @@ public:
     return_type allocate(field_mapper &mapper) const
     {
         return std::make_shared<Functor>(id);
+    }
+    
+    void check_constraints(const field_node &) const 
+    {
+        
     }
 private:
     field::identifier_type id;
@@ -178,6 +185,8 @@ public:
     virtual size_t max_size() const { return 0; }
     virtual size_t min_size() const { return 0; }
     virtual storage storage_type() const { return storage::bytes; }
+    virtual std::string to_string() const = 0;
+    virtual void check_constraints() const { };
     
     virtual return_type allocate(field_mapper &mapper) const = 0;
 };
@@ -189,6 +198,8 @@ public:
     return_type allocate(field_mapper &mapper) const;
     size_t max_size() const;
     size_t min_size() const;
+    std::string to_string() const;
+    void check_constraints() const;
 private:
     filler_node *filler;
     size_t size;
@@ -203,6 +214,8 @@ public:
     size_t max_size() const;
     size_t min_size() const;
     storage storage_type() const;
+    std::string to_string() const;
+    void check_constraints() const;
 private:
     filler_node *filler;
     size_t size;
@@ -217,35 +230,86 @@ public:
     return_type allocate(field_mapper &mapper) const;
     size_t max_size() const;
     size_t min_size() const;
+    std::string to_string() const;
+    void check_constraints() const;
 private:
     filler_node *filler;
     size_t min_sz, max_sz;
     field::identifier_type id;
 };
 
-class compound_field_node : public field_node {
+template<typename Impl, typename Tag>
+class generic_compound_field_node : public field_node {
 public:
-    compound_field_node(fields_list *fields, identifier_type id = field::invalid_id);
+    generic_compound_field_node(fields_list *fields, identifier_type id = field::invalid_id)
+    : fields(fields), id(id)
+    {
+        
+    }
+
+    return_type allocate(field_mapper &mapper) const
+    {
+        auto impl = make_unique<Impl>();
+        for(const auto &i : *fields)
+            impl->add_field(i->allocate(mapper));
+        return field(id, nullptr, std::move(impl));
+    }
+
+    size_t max_size() 
+    {
+        return (*std::max_element(
+            fields->begin(),
+            fields->end(),
+            [](const field_node *lhs, const field_node *rhs) { 
+                return lhs->max_size() < rhs->max_size();
+            }
+        ))->max_size();
+    }
+
+    size_t min_size() 
+    {
+        return (*std::min_element(
+            fields->begin(),
+            fields->end(),
+            [](const field_node *lhs, const field_node *rhs) { 
+                return lhs->min_size() < rhs->min_size();
+            }
+        ))->min_size();
+    }
     
-    return_type allocate(field_mapper &mapper) const;
-    size_t max_size() const;
-    size_t min_size() const;
+    std::string to_string() const 
+    {
+        return Tag::str_repr;
+    }
+    
+    void check_constraints() const
+    {
+        for_each(
+            fields->begin(),
+            fields->end(),
+            [](const field_node* f) { f->check_constraints(); }
+        );
+    }
 private:
     fields_list *fields;
     field::identifier_type id;
 };
 
-class compound_bitfield_node : public field_node {
-public:
-    compound_bitfield_node(fields_list *fields, identifier_type id = field::invalid_id);
-    
-    return_type allocate(field_mapper &mapper) const;
-    size_t max_size() const;
-    size_t min_size() const;
-private:
-    fields_list *fields;
-    field::identifier_type id;
+struct compound_field_node_tag {
+    static const std::string str_repr;
 };
+
+struct compound_bitfield_node_tag {
+    static const std::string str_repr;
+};
+
+typedef generic_compound_field_node<
+    ::compound_field_impl, 
+    compound_field_node_tag> compound_field_node;
+    
+typedef generic_compound_field_node<
+    ::compound_bitfield_impl,
+    compound_bitfield_node_tag> compound_bitfield_node;
 
 class template_def_node {
 public:
@@ -261,6 +325,7 @@ public:
     template_field_node(template_def_node* definition, size_t min_sz, size_t max_sz);
     
     return_type allocate(field_mapper &mapper) const;
+    std::string to_string() const;
 private:
     template_def_node* definition;
     size_t min_sz, max_sz;
