@@ -30,8 +30,8 @@ public:
     virtual dependents_type dependent_fields() const { 
         return { };
     };
-    virtual void set_value(double value);
-    virtual double get_value() const;
+    virtual void set_value(int64_t value);
+    virtual int64_t get_value() const;
 private:
 
 };

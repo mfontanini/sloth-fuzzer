@@ -31,12 +31,12 @@ public:
         return data.size();
     }
     
-    void set_value(double value) 
+    void set_value(int64_t value) 
     {
         field_impl::set_value(value);
     }
     
-    double get_value() const
+    int64_t get_value() const
     {
         return field_impl::get_value();
     }

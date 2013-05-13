@@ -15,11 +15,11 @@ class field;
 
 class syntax_parser {
 public:
-    typedef grammar::value_node value_node;
     typedef std::shared_ptr<field_filler> filler_ptr;
-    typedef std::function<filler_ptr(field_filler::identifier_type)> filler_fun_type;
-    typedef std::function<value_node*(field_filler::identifier_type)> value_fun_type;
+    typedef std::function<grammar::filler_node*(field_filler::identifier_type)> filler_fun_type;
+    typedef std::function<grammar::value_node*(field_filler::identifier_type)> value_fun_type;
     typedef field_filler::identifier_type identifier_type;
+    typedef grammar::value_node value_node;
     typedef grammar::field_node field_node;
     typedef grammar::filler_node filler_node;
     typedef grammar::fields_list fields_list;
@@ -49,8 +49,6 @@ public:
         value_functions.insert(std::make_pair(std::move(name), std::move(ptr)));
     }
     
-    filler_ptr allocate_filler_function(const std::string &name, identifier_type id);
-    value_node *allocate_value_function(const std::string &name, identifier_type id);
     bool is_filler_function(const std::string &name);
     bool is_value_function(const std::string &name);
     
@@ -117,14 +115,7 @@ public:
     template<typename Functor>
     value_node *make_binary_function_value_node(value_node *lhs, value_node *rhs) 
     {
-        return node_alloc<value_node>(
-            [=](field_mapper &mapper) {
-                return make_unique<Functor>(
-                    std::unique_ptr< ::value_node>(lhs->allocate(mapper)),
-                    std::unique_ptr< ::value_node>(rhs->allocate(mapper))
-                );
-            }
-        );
+        return node_alloc<grammar::binary_value_function_node<Functor>>(lhs, rhs);
     }
 private:
     template<typename T, typename... Args>
@@ -136,6 +127,8 @@ private:
         return ptr;
     }
 
+    filler_node* allocate_filler_function(const std::string &name, identifier_type id);
+    value_node* allocate_value_function(const std::string &name, identifier_type id);
     std::unique_ptr<grammar::script> script_root;
     field_mapper mapper;
     std::map<std::string, filler_fun_type> filler_functions;

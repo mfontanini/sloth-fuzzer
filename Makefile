@@ -7,7 +7,7 @@ BISON=bison
 INCLUDE = -Iinclude
 LDFLAGS= -lpthread -lcrypto -lboost_system -lboost_filesystem
 RM=rm
-SOURCES= $(wildcard src/*.cpp src/functions/*.cpp) src/parser/syntax_parser.cpp
+SOURCES= $(wildcard src/*.cpp src/functions/*.cpp) src/parser/syntax_parser.cpp src/parser/nodes.cpp
 OBJECTS=$(SOURCES:.cpp=.o) src/parser/grammar.o src/parser/syntax.o
 DEPS = $(SOURCES:.cpp=.d)
 

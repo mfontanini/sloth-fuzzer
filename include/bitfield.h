@@ -29,25 +29,24 @@ private:
 typedef generic_block_field_impl<std::vector<bool>> bitfield_impl;
 
 template<>
-inline void generic_block_field_impl<std::vector<bool>>::set_value(double value)
+inline void generic_block_field_impl<std::vector<bool>>::set_value(int64_t value)
 {
-    uint64_t value_int = value;
     for(auto iter = data.rbegin(); iter != data.rend(); ++iter) {
-        *iter = value_int & 1;
-        value_int >>= 1;
+        *iter = value & 1;
+        value >>= 1;
     }
-    if(value_int > 0)
+    if(value > 0)
         throw value_too_large();
 }
 
 template<>
-inline double generic_block_field_impl<std::vector<bool>>::get_value() const
+inline int64_t generic_block_field_impl<std::vector<bool>>::get_value() const
 {
-    uint64_t value_int{};
+    uint64_t value{};
     for(auto iter = data.rbegin(); iter != data.rend(); ++iter) {
-        value_int = (value_int << 1) | static_cast<bool>(*iter);
+        value = (value << 1) | static_cast<bool>(*iter);
     }
-    return value_int;
+    return value;
 }
 
 #endif

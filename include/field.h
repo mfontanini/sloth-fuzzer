@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <atomic>
 #include <vector>
+#include <cstdint>
 #include "utils.h"
 #include "field_impl.h"
 #include "field_filler.h"
@@ -30,6 +31,8 @@ public:
     typedef std::unique_ptr<field_impl> unique_impl;
     typedef std::shared_ptr<field_filler> filler_type;
     typedef field_impl::dependents_type dependents_type;
+    
+    static constexpr identifier_type invalid_id = 0;
 
     field(filler_type filler, unique_impl impl);
     field(identifier_type id, filler_type filler, unique_impl impl);
@@ -51,8 +54,8 @@ public:
     
     void accept_visitor(const visitor_type &visitor) const;
     
-    void set_value(double value);
-    double get_value() const;
+    void set_value(int64_t value);
+    int64_t get_value() const;
     
     dependents_type dependent_fields() const;
     

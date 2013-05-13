@@ -7,7 +7,7 @@
 #include "field_mapper.h"
 #include "generation_context.h"
 
-// the Functor is probably a stateless class, so probably EBCO works here
+// the Functor is probably a stateless class, so surely EBCO works here
 template<typename Functor>
 class binary_function_node : public value_node, Functor {
 public:
@@ -20,7 +20,8 @@ public:
         
     }
     
-    double eval(generation_context &ctx) {
+    double eval(generation_context &ctx) 
+    {
         return (*this)(lhs->eval(ctx), rhs->eval(ctx));
     }
     
@@ -46,7 +47,8 @@ public:
         
     }
     
-    double eval(generation_context &ctx) {
+    double eval(generation_context &ctx) 
+    {
         return (*this)(node->eval(ctx));
     }
     
@@ -66,7 +68,8 @@ public:
         
     }
     
-    double eval(generation_context &ctx) {
+    double eval(generation_context &ctx) 
+    {
         return ctx.get_mapper().find_field(id).get_value();
     }
     

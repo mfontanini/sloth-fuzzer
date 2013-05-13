@@ -21,10 +21,10 @@ private:
     using tup_elem = typename std::tuple_element<n, std::tuple<Ts...>>::type;
     
     template<size_t n, typename T>
-    using enabler = std::enable_if<std::is_same<T, tup_elem<n>>::value, void>;
+    using enabler = std::enable_if<std::is_base_of<tup_elem<n>, T>::value, void>;
     
     template<size_t n, typename T>
-    using disabler = std::enable_if<!std::is_same<T, tup_elem<n>>::value, void>;
+    using disabler = std::enable_if<!std::is_base_of<tup_elem<n>, T>::value, void>;
     
     template<size_t n, typename T>
     typename disabler<n, T>::type internal_store(T* ptr) {

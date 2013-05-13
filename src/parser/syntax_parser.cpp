@@ -36,30 +36,32 @@ syntax_parser::syntax_parser()
 {
     register_filler_function(
         "md5", 
-        [](identifier_type id) { return std::make_shared<md5_function>(id); }
+        [&](identifier_type id) { 
+            return node_alloc<grammar::function_filler_node<md5_function>>(id); 
+        }
     );
     register_value_function(
         "size", 
         [&](identifier_type id) { 
-            return node_alloc<value_node>([=](field_mapper &) {
-                return make_unique<size_function>(id);
-            }); 
+            return node_alloc<grammar::value_function_node<size_function>>(
+                id
+            );
         }
     );
     register_value_function(
         "count", 
         [&](identifier_type id) {
-            return node_alloc<value_node>([=](field_mapper &) {
-                return make_unique<field_count_function>(id); 
-            });
+            return node_alloc<grammar::value_function_node<field_count_function>>(
+                id
+            );
         }
     );
     register_value_function(
         "crc", 
         [&](identifier_type id) {
-            return node_alloc<value_node>([=](field_mapper &) {
-                return make_unique<crc32_function>(id); 
-            });
+            return node_alloc<grammar::value_function_node<crc32_function>>(
+                id
+            );
         }
     );
 }
@@ -116,7 +118,7 @@ field_mapper &syntax_parser::get_mapper()
     return mapper;
 }
 
-auto syntax_parser::allocate_filler_function(const std::string &name, identifier_type id) -> filler_ptr
+auto syntax_parser::allocate_filler_function(const std::string &name, identifier_type id) -> filler_node*
 {
     return filler_functions.at(name)(id);
 }
@@ -130,58 +132,28 @@ auto syntax_parser::allocate_value_function(const std::string &name, identifier_
 
 auto syntax_parser::make_block_node(filler_node *filler, size_t size) -> field_node *
 {
-    return node_alloc<field_node>(
-        [=](field_mapper &mapper) {
-            return field::from_impl<block_field_impl>(
-                filler ? filler->allocate(mapper) : default_filler(), 
-                size
-            );
-        }
-    );
+    return node_alloc<grammar::block_field_node>(filler, size);
 }
 
 auto syntax_parser::make_block_node(filler_node *filler, size_t size, 
   const std::string &name) -> field_node *
 {
     auto id = mapper.find_register_field_name(name);
-    return node_alloc<field_node>(
-        [=](field_mapper &mapper) {
-            return field::from_impl<block_field_impl>(
-                id, 
-                filler ? filler->allocate(mapper) : default_filler(), 
-                size
-            );
-        }
-    );
+    return node_alloc<grammar::block_field_node>(filler, size, id);
 }
 
 // bitfield
 
 auto syntax_parser::make_bitfield_node(filler_node *filler, size_t size) -> field_node *
 {
-    return node_alloc<field_node>(
-        [=](field_mapper &mapper) {
-            return field::from_impl<bitfield_impl>(
-                filler ? filler->allocate(mapper) : default_bit_filler(), 
-                size
-            );
-        }
-    );
+    return node_alloc<grammar::bitfield_node>(filler, size);
 }
 
 auto syntax_parser::make_bitfield_node(filler_node *filler, size_t size, 
   const std::string &name) -> field_node *
 {
     auto id = mapper.find_register_field_name(name);
-    return node_alloc<field_node>(
-        [=](field_mapper &mapper) {
-            return field::from_impl<bitfield_impl>(
-                id, 
-                filler ? filler->allocate(mapper) : default_bit_filler(), 
-                size
-            );
-        }
-    );
+    return node_alloc<grammar::bitfield_node>(filler, size, id);
 }
 
 // variable block
@@ -189,15 +161,7 @@ auto syntax_parser::make_bitfield_node(filler_node *filler, size_t size,
 auto syntax_parser::make_variable_block_node(filler_node *filler, 
   size_t min_size, size_t max_size) -> field_node *
 {
-    return node_alloc<field_node>(
-        [=](field_mapper &mapper) {
-            return field::from_impl<variable_block_field_impl>(
-                filler ? filler->allocate(mapper) : default_filler(), 
-                min_size,
-                max_size
-            );
-        }
-    );
+    return node_alloc<grammar::varblock_field_node>(filler, min_size, max_size);
 }
 
 auto syntax_parser::make_variable_block_node(filler_node *filler, 
@@ -205,70 +169,33 @@ auto syntax_parser::make_variable_block_node(filler_node *filler,
 -> field_node *
 {
     auto id = mapper.find_register_field_name(name);
-    return node_alloc<field_node>(
-        [=](field_mapper &mapper) {
-            return field::from_impl<variable_block_field_impl>(
-                id, 
-                filler ? filler->allocate(mapper) : default_filler(), 
-                min_size,
-                max_size
-            );
-        }
-    );
+    return node_alloc<grammar::varblock_field_node>(filler, min_size, max_size, id);
 }
 
 // compound
 
 auto syntax_parser::make_compound_field_node(fields_list *fields) -> field_node*
 {
-    return node_alloc<field_node>(
-        [=](field_mapper &mapper) {
-            auto impl = make_unique< ::compound_field_impl>();
-            for(const auto &i : *fields)
-                impl->add_field(i->allocate(mapper));
-            return field(nullptr, std::move(impl));
-        }
-    );
+    return node_alloc<grammar::compound_field_node>(fields);
 }
 
 auto syntax_parser::make_compound_field_node(fields_list *fields, const std::string &name) -> field_node *
 {
     auto id = mapper.find_register_field_name(name);
-    return node_alloc<field_node>(
-        [=](field_mapper &mapper) {
-            auto impl = make_unique< ::compound_field_impl>();
-            for(const auto &i : *fields)
-                impl->add_field(i->allocate(mapper));
-            return field(id, nullptr, std::move(impl));
-        }
-    );
+    return node_alloc<grammar::compound_field_node>(fields, id);
 }
 
 // compound bitfield
 
 auto syntax_parser::make_compound_bitfield_node(fields_list *fields) -> field_node*
 {
-    return node_alloc<field_node>(
-        [=](field_mapper &mapper) {
-            auto impl = make_unique< ::compound_bitfield_impl>();
-            for(const auto &i : *fields)
-                impl->add_field(i->allocate(mapper));
-            return field(nullptr, std::move(impl));
-        }
-    );
+    return node_alloc<grammar::compound_bitfield_node>(fields);
 }
 
 auto syntax_parser::make_compound_bitfield_node(fields_list *fields, const std::string &name) -> field_node *
 {
     auto id = mapper.find_register_field_name(name);
-    return node_alloc<field_node>(
-        [=](field_mapper &mapper) {
-            auto impl = make_unique< ::compound_bitfield_impl>();
-            for(const auto &i : *fields)
-                impl->add_field(i->allocate(mapper));
-            return field(id, nullptr, std::move(impl));
-        }
-    );
+    return node_alloc<grammar::compound_bitfield_node>(fields, id);
 }
 
 // template field
@@ -276,11 +203,10 @@ auto syntax_parser::make_compound_bitfield_node(fields_list *fields, const std::
 auto syntax_parser::make_template_field_node(const std::string &template_name, 
   size_t min, size_t max) -> field_node*
 {
-    auto &parser = *this;
-    return node_alloc<field_node>(
-        [=, &parser](field_mapper &mapper) {
-            return parser.allocate_template(template_name, min, max);
-        }
+    return node_alloc<grammar::template_field_node>(
+        templates.at(template_name),
+        min, 
+        max
     );
 }
 
@@ -288,7 +214,8 @@ auto syntax_parser::make_template_field_node(const std::string &template_name,
 
 auto syntax_parser::make_template_def_node(fields_list *fields) -> template_def_node*
 {
-    return node_alloc<template_def_node>(
+    return node_alloc<grammar::template_def_node>(fields);
+    /*return node_alloc<template_def_node>(
         [&, fields](field_mapper &mapper, size_t min, size_t max) {
             auto compound_impl = make_unique< ::compound_field_impl>();
             for(const auto &i : *fields)
@@ -300,7 +227,7 @@ auto syntax_parser::make_template_def_node(fields_list *fields) -> template_def_
                         );
             return field(nullptr, std::move(impl));
         }
-    );
+    );*/
 }
 
 auto syntax_parser::make_fields_list() -> fields_list *
@@ -312,53 +239,30 @@ auto syntax_parser::make_fields_list() -> fields_list *
 
 auto syntax_parser::make_const_value_node(double f) -> value_node *
 {
-    return node_alloc<value_node>(
-        [=](field_mapper &) {
-            return make_unique< ::const_value_node>(f);
-        }
-    );
+    return node_alloc<grammar::const_value_node>(f);
 }
 
 auto syntax_parser::make_const_string_node(const std::string &str) -> filler_node *
 {
-    return node_alloc<filler_node>(
-        [=](field_mapper &) {
-            return std::make_shared<const_string_node>(str);
-        }
-    );
+    return node_alloc<grammar::const_string_node>(str);
 }
 
 auto syntax_parser::make_node_value_node(const std::string &name) -> value_node *
 {
     auto id = mapper.find_register_field_name(name);
-    return node_alloc<value_node>(
-        [=](field_mapper &) {
-            return make_unique< ::node_value_function_node>(id);
-        }
-    );
+    return node_alloc<grammar::node_value_node>(id);
 }
 
 auto syntax_parser::make_node_filler_node(const std::string &field_name, 
   const std::string &function_name) -> filler_node *
 {
     auto id = mapper.find_register_field_name(field_name);
-    auto &parser = *this;
     if(is_filler_function(function_name)) {
-        return node_alloc<filler_node>(
-            [=, &parser](field_mapper &) {
-                return allocate_filler_function(function_name, id);
-            }
-        );
+        return allocate_filler_function(function_name, id);
     }
     else if(is_value_function(function_name)) {
-        return node_alloc<filler_node>(
-            [=, &parser](field_mapper &mapper) {
-                return make_unique< ::function_value_filler>(
-                    ::function_value_filler::unique_value(
-                        allocate_value_function(function_name, id)->allocate(mapper)
-                    )
-                );
-            }
+        return node_alloc<grammar::function_value_filler_node>(
+            allocate_value_function(function_name, id)
         );
     }
     else {
@@ -373,15 +277,9 @@ auto syntax_parser::make_node_value_function_node(const std::string &field_name,
     return allocate_value_function(function_name, id);
 }
 
-auto syntax_parser::make_function_value_filler_node(value_node *node) -> filler_node *
+auto syntax_parser::make_function_value_filler_node(value_node *node) -> filler_node*
 {
-    return node_alloc<filler_node>(
-        [=](field_mapper &mapper) {
-            return make_unique< ::function_value_filler>(
-                node->allocate(mapper)
-            );
-        }
-    );
+    return node_alloc<grammar::function_value_filler_node>(node);
 }
 
 bool syntax_parser::is_filler_function(const std::string &name)

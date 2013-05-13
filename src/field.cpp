@@ -6,7 +6,7 @@
 #include "field_mapper.h"
 #include "generation_context.h"
 
-std::atomic<field::identifier_type> field::global_id;
+std::atomic<field::identifier_type> field::global_id(1);
 
 field::identifier_type field::generate_id()
 {
@@ -22,7 +22,8 @@ field::field(filler_type filler, unique_impl impl)
 field::field(identifier_type id, filler_type filler, unique_impl impl)
 : impl(std::move(impl)), filler(std::move(filler)), identifier(id)
 {
-    
+    if(identifier == invalid_id)
+        identifier = global_id++;
 }
 
 field::field(const field &rhs) 
@@ -94,7 +95,7 @@ void field::fill(generation_context &context)
         filler->fill(*this, context);
 }
 
-void field::set_value(double value)
+void field::set_value(int64_t value)
 {
     if(value == 0.0)
         std::fill(begin(), end(), 0);
@@ -102,7 +103,7 @@ void field::set_value(double value)
         impl->set_value(value);
 }
 
-double field::get_value() const
+int64_t field::get_value() const
 {
     return impl->get_value();
 }
