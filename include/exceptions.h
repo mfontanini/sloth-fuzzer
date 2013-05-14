@@ -70,13 +70,22 @@ public:
     }
 };
 
-class ast_field_too_small : public std::runtime_error {
+class ast_field_too_small : public parser_exception {
 public:
     ast_field_too_small(const std::string &node, const std::string &content)
-    : std::runtime_error("Field " + node + " too small to hold: \"" + content + "\"")
+    : parser_exception(node + " too small to hold: \"" + content + "\"")
     {
         
     }
+};
+
+class incorrect_ast_field_size : public parser_exception {
+public:
+    incorrect_ast_field_size(const std::string &node, size_t expected)
+    : parser_exception(node + " should be " + std::to_string(expected) + " bytes long.")
+    {
+        
+    }    
 };
 
 #endif // FUZZER_EXCEPTIONS_H

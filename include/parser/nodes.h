@@ -160,9 +160,10 @@ public:
         return std::make_shared<Functor>(id);
     }
     
-    void check_constraints(const field_node &) const 
+    void check_constraints(const field_node &f) const 
     {
-        
+        for(const auto &c : Functor::get_constraints())
+            c->check(f);
     }
 private:
     field::identifier_type id;

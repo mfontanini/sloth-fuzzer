@@ -61,8 +61,8 @@ public:
     
     // bit field
     
-    field_node *make_bitfield_node(filler_node *filler, size_t size);
-    field_node *make_bitfield_node(filler_node *filler, size_t size, const std::string &name);
+    field_node *make_bitfield_node(value_node *vnode, size_t size);
+    field_node *make_bitfield_node(value_node *vnode, size_t size, const std::string &name);
     
     // variable block
 

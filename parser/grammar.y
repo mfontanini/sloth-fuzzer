@@ -209,7 +209,7 @@ bitfields:
 ;
 
 bitfield:
-    BITFIELD '<' INT_CONST '>' IDENTIFIER '=' filler ';' { 
+    BITFIELD '<' INT_CONST '>' IDENTIFIER '=' expression ';' { 
         $$ = grammar_syntax_parser->make_bitfield_node($7, $3, *$5);  
     }
     |
@@ -217,7 +217,7 @@ bitfield:
         $$ = grammar_syntax_parser->make_bitfield_node(nullptr, $3, *$5); 
     }
     |
-    BITFIELD '<' INT_CONST '>' '=' filler ';' { 
+    BITFIELD '<' INT_CONST '>' '=' expression ';' { 
         $$ = grammar_syntax_parser->make_bitfield_node($6, $3);
     }
     |

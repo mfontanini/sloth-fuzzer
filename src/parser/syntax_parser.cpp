@@ -145,15 +145,17 @@ auto syntax_parser::make_block_node(filler_node *filler, size_t size,
 
 // bitfield
 
-auto syntax_parser::make_bitfield_node(filler_node *filler, size_t size) -> field_node *
+auto syntax_parser::make_bitfield_node(value_node *vnode, size_t size) -> field_node *
 {
+    filler_node *filler = vnode ? make_function_value_filler_node(vnode) : nullptr;
     return node_alloc<grammar::bitfield_node>(filler, size);
 }
 
-auto syntax_parser::make_bitfield_node(filler_node *filler, size_t size, 
+auto syntax_parser::make_bitfield_node(value_node *vnode, size_t size, 
   const std::string &name) -> field_node *
 {
     auto id = mapper.find_register_field_name(name);
+    filler_node *filler = vnode ? make_function_value_filler_node(vnode) : nullptr;
     return node_alloc<grammar::bitfield_node>(filler, size, id);
 }
 
@@ -216,19 +218,6 @@ auto syntax_parser::make_template_field_node(const std::string &template_name,
 auto syntax_parser::make_template_def_node(fields_list *fields) -> template_def_node*
 {
     return node_alloc<grammar::template_def_node>(fields);
-    /*return node_alloc<template_def_node>(
-        [&, fields](field_mapper &mapper, size_t min, size_t max) {
-            auto compound_impl = make_unique< ::compound_field_impl>();
-            for(const auto &i : *fields)
-                compound_impl->add_field(i->allocate(mapper));
-            auto impl = make_unique< ::template_field_impl>(
-                            field(nullptr, std::move(compound_impl)), 
-                            min, 
-                            max
-                        );
-            return field(nullptr, std::move(impl));
-        }
-    );*/
 }
 
 auto syntax_parser::make_fields_list() -> fields_list *
