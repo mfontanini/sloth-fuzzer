@@ -1,7 +1,8 @@
 #include <sstream>
 #include <limits>
+#include <stdexcept>
 #include "command_parser.h"
-#include "exceptions.h"
+
 
 
 command_parser::command_parser(const std::string &input)
@@ -24,7 +25,7 @@ auto command_parser::split_cmd(const std::string &cmd) -> std::tuple<std::string
     std::string function, part;
     size_t index = std::numeric_limits<size_t>::max();
     if(!std::getline(input, function, ' '))
-        throw parser_exception("no command given");
+        throw std::runtime_error("no command given");
     while(std::getline(input, part, ' ')) {
         if(part == "{%}")
             index = args.size();

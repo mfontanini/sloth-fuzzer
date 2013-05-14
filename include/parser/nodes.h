@@ -190,6 +190,11 @@ public:
     virtual void check_constraints() const { };
     
     virtual return_type allocate(field_mapper &mapper) const = 0;
+    
+    void set_line_number(size_t line);
+    size_t get_line_number() const;
+private:
+    size_t line_number;
 };
 
 class block_field_node : public field_node {

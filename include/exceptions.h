@@ -5,87 +5,57 @@
 
 class invalid_field_size : public std::exception {
 public:
-    const char *what() const throw() {
-        return "invalid field size";
-    }
+    const char *what() const throw();
 };
 
 class dependency_loop_error : public std::exception {
 public:
-    const char *what() const throw() {
-        return "dependency loop error";
-    }
+    const char *what() const throw();
 };
 
 class parse_error : public std::exception {
 public:
-    const char *what() const throw() {
-        return "parse error";
-    }
+    const char *what() const throw();
 };
 
 class unprepared_field : public std::exception {
 public:
-    const char *what() const throw() {
-        return "unprepared field";
-    }
+    const char *what() const throw();
 };
 
 class file_open_exception : public std::exception {
 public:
-    const char *what() const throw() {
-        return "file open exception";
-    }
+    const char *what() const throw();
 };
 
 class not_implemented : public std::exception {
 public:
-    const char *what() const throw() {
-        return "not implemented";
-    }
+    const char *what() const throw();
 };
 
 class value_too_large : public std::exception {
 public:
-    const char *what() const throw() {
-        return "value too large";
-    }
+    const char *what() const throw();
 };
 
-class parser_exception : public std::runtime_error {
+class semantic_exception : public std::runtime_error {
 public:
-    parser_exception(const std::string &str)
-    : std::runtime_error("Parser exception: " + str)
-    {
-        
-    }
+    semantic_exception(size_t line, const std::string &str);
 };
 
 class execution_exception : public std::runtime_error {
 public:
-    execution_exception(const std::string &str)
-    : std::runtime_error("Execution exception: " + str)
-    {
-        
-    }
+    execution_exception(const std::string &str);
 };
 
-class ast_field_too_small : public parser_exception {
+class ast_field_too_small : public semantic_exception {
 public:
-    ast_field_too_small(const std::string &node, const std::string &content)
-    : parser_exception(node + " too small to hold: \"" + content + "\"")
-    {
-        
-    }
+    ast_field_too_small(size_t line, const std::string &node, const std::string &content);
 };
 
-class incorrect_ast_field_size : public parser_exception {
+class incorrect_ast_field_size : public semantic_exception {
 public:
-    incorrect_ast_field_size(const std::string &node, size_t expected)
-    : parser_exception(node + " should be " + std::to_string(expected) + " bytes long.")
-    {
-        
-    }    
+    incorrect_ast_field_size(size_t line, const std::string &node, size_t expected);
 };
 
 #endif // FUZZER_EXCEPTIONS_H

@@ -1,17 +1,18 @@
-#include <iostream>
-#include <fstream>
 #ifndef WIN32
     #include <signal.h>
 #endif
 #include <atomic>
+#include <iostream>
+#include <fstream>
 #include <boost/filesystem.hpp>
+#include <boost/program_options.hpp>
 #include "field.h"
-#include "field_mapper.h"
-#include "topological_sorter.h"
 #include "parser/syntax_parser.h"
 #include "generation_context.h"
+#include "topological_sorter.h"
 #include "executer.h"
 #include "field_serializer.h"
+
 
 std::atomic<bool> running(true);
 field_serializer* serializer_ptr(nullptr);
@@ -58,15 +59,49 @@ int main(int argc, char *argv[]) {
                 serializer_ptr->stop();
         });
     #endif
+    namespace po = boost::program_options;
+    
+    std::string template_file;
+    std::string command;
+    
+    po::options_description desc("Allowed options");
+    po::positional_options_description positional;
+    positional.add("command", -1);
+    desc.add_options()
+        ("help,h", "print help message")
+        ("command,c", po::value<std::string>(&command), "command to execute")
+        ("template,t", po::value<std::string>(&template_file), "template file to use")
+    ;
+
+
+    po::variables_map vm;
+    po::store(
+        po::command_line_parser(argc, argv).
+        options(desc).positional(positional).run(),
+        vm
+    );
+    po::notify(vm);    
+
+    if (vm.count("help")) {
+        std::cout << desc << "\n";
+        return 1;
+    }
+
+    if (vm.count("template") == 0) {
+        std::cout << "template file not set\n";
+        return 2;
+    }
+    if (vm.count("command") == 0) {
+        std::cout << "command to execute not set\n";
+        return 3;
+    }
+
     try {
-        //run("templates/png", "/usr/bin/convert {%} /dev/shm/foo.jpg");
-        //run("templates/mp3", "/usr/local/bin/mpg123");
-        run("templates/test", "/usr/bin/hexdump -C");
+        run(template_file, command);
         std::cout << std::endl;
     }
     catch(std::exception &ex) {
-        std::cout << std::endl;
-        std::cout << "Terminated due to exception: " << ex.what() << std::endl;
+        std::cout << ex.what() << ". aborting..." << std::endl;
     }
 }
 

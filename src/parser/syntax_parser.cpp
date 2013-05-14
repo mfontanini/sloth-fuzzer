@@ -1,5 +1,4 @@
 #include <fstream>
-#include <iostream> // borrame
 #include "parser/syntax_parser.h"
 #include "compound_field.h"
 #include "exceptions.h"
@@ -78,7 +77,7 @@ void syntax_parser::parse(std::istream &input)
     grammar_syntax_parser = this;
     curr_lineno = 1;
     
-    if(yyparse() != 0)        
+    if(yyparse() != 0 || script_root == nullptr)
         throw parse_error();
     grammar_syntax_parser = nullptr;
     istr = nullptr;
@@ -99,7 +98,7 @@ field syntax_parser::allocate_template(const std::string &name, size_t min, size
 
 void syntax_parser::set_script(grammar::script* scr)
 {
-    script_root.reset(scr);
+    script_root = scr;
 }
 
 field syntax_parser::get_root_field()
@@ -127,6 +126,11 @@ auto syntax_parser::allocate_filler_function(const std::string &name, identifier
 auto syntax_parser::allocate_value_function(const std::string &name, identifier_type id) -> value_node*
 {
     return value_functions.at(name)(id);
+}
+
+grammar::script *syntax_parser::make_script()
+{
+    return node_alloc<grammar::script>();
 }
 
 // block field

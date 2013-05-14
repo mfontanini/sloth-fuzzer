@@ -10,6 +10,7 @@
 #include "function_nodes.h"
 
 extern int curr_lineno;
+int num_errors = 0;
 
 extern syntax_parser* grammar_syntax_parser;
 
@@ -17,10 +18,8 @@ void yyerror(const char *s)
 {
     extern int curr_lineno;
 
-    std::cerr << "Line " << curr_lineno << ": " 
+    std::cerr << "error in line " << curr_lineno << ": " 
               << s << std::endl;
-    //std::cerr << yylloc.first_column;
-    std::cerr << std::endl;
 }
 
 extern "C"
@@ -72,17 +71,21 @@ extern "C"
 
 script: 
     TEMPLATES '{' templates '}' ';' fields {
-        auto s = new grammar::script(); 
-        for(auto &i : *$6) 
-            s->add_field_node(std::move(i)); 
-        grammar_syntax_parser->set_script(s); 
+        if(num_errors == 0) {
+            auto s = grammar_syntax_parser->make_script(); 
+            for(auto &i : *$6) 
+                s->add_field_node(std::move(i)); 
+            grammar_syntax_parser->set_script(s); 
+        }
     }
     |
     fields { 
-        auto s = new grammar::script(); 
-        for(auto &i : *$1) 
-            s->add_field_node(std::move(i)); 
-        grammar_syntax_parser->set_script(s);  
+        if(num_errors == 0) {
+            auto s = grammar_syntax_parser->make_script(); 
+            for(auto &i : *$1) 
+                s->add_field_node(std::move(i)); 
+            grammar_syntax_parser->set_script(s);  
+        }
     }
 ;
 
@@ -106,11 +109,13 @@ template_def:
 fields:
     field {
         $$ = grammar_syntax_parser->make_fields_list();
-        $$->push_back($1);
+        if($1)
+            $$->push_back($1);
     }
     |
     fields field {
-        $1->push_back($2);
+        if($2)
+            $1->push_back($2);
     }
 ;
 
@@ -124,6 +129,8 @@ field:
     template_field { $$ = $1; }
     |
     compound_bitfield { $$ = $1; }
+    |
+    error ';' { num_errors++; yyerrok; }
 ;
 
 block_field: 

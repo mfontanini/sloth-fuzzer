@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <map>
+#include <type_traits>
 #include <string>
 #include <functional>
 #include "parser/nodes.h"
@@ -112,24 +113,35 @@ public:
         return node_alloc<std::string>(std::forward<Ts>(args)...);
     }
     
+    grammar::script *make_script();
+    
     template<typename Functor>
     value_node *make_binary_function_value_node(value_node *lhs, value_node *rhs) 
     {
         return node_alloc<grammar::binary_value_function_node<Functor>>(lhs, rhs);
     }
 private:
+    template<bool>
+    struct line_number_setter {
+        template<typename T>
+        static void set(size_t, T*) { }
+    };
+
     template<typename T, typename... Args>
     T *node_alloc(Args&&... args) 
     {
+        extern int curr_lineno;
+        
         auto smart_ptr = make_unique<T>(std::forward<Args>(args)...);
         auto ptr = smart_ptr.get();
+        line_number_setter<std::is_base_of<field_node, T>::value>::set(curr_lineno, ptr);
         destructor.store_pointer(smart_ptr.release());
         return ptr;
     }
 
     filler_node* allocate_filler_function(const std::string &name, identifier_type id);
     value_node* allocate_value_function(const std::string &name, identifier_type id);
-    std::unique_ptr<grammar::script> script_root;
+    grammar::script* script_root;
     field_mapper mapper;
     std::map<std::string, filler_fun_type> filler_functions;
     std::map<std::string, value_fun_type> value_functions;
@@ -140,8 +152,17 @@ private:
         fields_list, 
         template_def_node,
         value_node,
-        std::string
+        std::string,
+        grammar::script
     > destructor;
+};
+
+template<>
+struct syntax_parser::line_number_setter<true> {
+    template<typename T>
+    static void set(size_t line, T *ptr) { 
+        ptr->set_line_number(line);
+    }
 };
 
 #endif // FUZZER_SYNTAX_PARSER_H

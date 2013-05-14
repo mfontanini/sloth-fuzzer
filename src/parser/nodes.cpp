@@ -79,7 +79,7 @@ auto const_string_node::allocate(field_mapper &) const -> return_type
 void const_string_node::check_constraints(const field_node &f) const
 {
     if(f.min_size() < value.size())
-        throw ast_field_too_small(f.to_string(), value);
+        throw ast_field_too_small(f.get_line_number(), f.to_string(), value);
 }
 
 // function_value_filler_node
@@ -98,6 +98,18 @@ auto function_value_filler_node::allocate(field_mapper &mapper) const -> return_
 void function_value_filler_node::check_constraints(const field_node &f) const
 {
     
+}
+
+// field_node
+
+void field_node::set_line_number(size_t line)
+{
+    line_number = line;
+}
+
+size_t field_node::get_line_number() const
+{
+    return line_number;
 }
 
 // block_field_node

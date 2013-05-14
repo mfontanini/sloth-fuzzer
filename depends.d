@@ -22,12 +22,9 @@ include/exceptions.h:
 include/utils.h:
 
 include/exceptions.h:
-src/command_parser.o: src/command_parser.cpp include/command_parser.h \
- include/exceptions.h
+src/command_parser.o: src/command_parser.cpp include/command_parser.h
 
 include/command_parser.h:
-
-include/exceptions.h:
 src/compound_field.o: src/compound_field.cpp include/compound_field.h \
  include/field_impl.h include/utils.h include/field.h \
  include/field_filler.h include/functions/constraints.h \
@@ -64,6 +61,9 @@ include/field_filler.h:
 include/functions/constraints.h:
 
 include/field.h:
+
+include/exceptions.h:
+src/exceptions.o: src/exceptions.cpp include/exceptions.h
 
 include/exceptions.h:
 src/executer.o: src/executer.cpp include/executer.h \
