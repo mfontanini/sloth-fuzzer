@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <algorithm>
 #include <unordered_map>
 #include <functional>
 #include "field.h"
@@ -15,6 +16,19 @@ public:
     const field& find_field(field::identifier_type id) const;
     field::identifier_type find_field_name(const std::string &fname) const;
     field::identifier_type find_register_field_name(const std::string &fname);
+    
+    template<typename ForwardIterator>
+    void find_non_registered_fields(ForwardIterator output)
+    {
+        std::for_each(
+            str2id.begin(),
+            str2id.end(),
+            [&](const typename decltype(str2id)::value_type& vt) {
+                if(!vt.second.second)
+                    *output++ = vt.first;
+            }
+        );
+    }
 private:
     void visit(const field &f);
 

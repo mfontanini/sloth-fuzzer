@@ -22,6 +22,15 @@ field parse_file(const std::string &template_file)
     std::ifstream input_stream(template_file); 
     syntax_parser parser;
     parser.parse(input_stream);
+    
+    std::vector<std::string> undefined;
+    parser.get_mapper().find_non_registered_fields(std::back_inserter(undefined));
+    if(!undefined.empty()) {
+        for(const auto &str : undefined)
+            std::cout << "Field \"" << str << "\" is not defined." << std::endl;
+        throw parse_error();
+    }
+    
     return std::move(parser.get_root_field());
 }
 
@@ -32,7 +41,6 @@ void run(const std::string &template_file, const std::string &cmd)
     executer exec(cmd);
     field root = parse_file(template_file);
     size_t execution_count{}, crashed_count{};
-    //field_serializer serializer(std::move(root), 4);
     field_serializer serializer(std::move(root), 1);
     serializer_ptr = &serializer;
     while(running) {
