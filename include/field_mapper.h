@@ -9,7 +9,7 @@
 
 class field_mapper {
 public:
-    void register_field(std::string name, field::identifier_type id);
+    field::identifier_type register_field(std::string name);
     void register_field(field::identifier_type id, const field &f);
     void identify_fields(const field &root);
     const field& find_field(field::identifier_type id) const;
@@ -18,7 +18,7 @@ public:
 private:
     void visit(const field &f);
 
-    std::unordered_map<std::string, field::identifier_type> str2id;
+    std::unordered_map<std::string, std::pair<field::identifier_type, bool>> str2id;
     std::map<field::identifier_type, std::reference_wrapper<const field>> id2field;
 };
 

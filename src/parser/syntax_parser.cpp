@@ -143,7 +143,7 @@ auto syntax_parser::make_block_node(filler_node *filler, size_t size) -> field_n
 auto syntax_parser::make_block_node(filler_node *filler, size_t size, 
   const std::string &name) -> field_node *
 {
-    auto id = mapper.find_register_field_name(name);
+    auto id = mapper.register_field(name);
     return node_alloc<grammar::block_field_node>(filler, size, id);
 }
 
@@ -158,7 +158,7 @@ auto syntax_parser::make_bitfield_node(value_node *vnode, size_t size) -> field_
 auto syntax_parser::make_bitfield_node(value_node *vnode, size_t size, 
   const std::string &name) -> field_node *
 {
-    auto id = mapper.find_register_field_name(name);
+    auto id = mapper.register_field(name);
     filler_node *filler = vnode ? make_function_value_filler_node(vnode) : nullptr;
     return node_alloc<grammar::bitfield_node>(filler, size, id);
 }
@@ -175,7 +175,7 @@ auto syntax_parser::make_variable_block_node(filler_node *filler,
   size_t min_size, size_t max_size, const std::string &name) 
 -> field_node *
 {
-    auto id = mapper.find_register_field_name(name);
+    auto id = mapper.register_field(name);
     return node_alloc<grammar::varblock_field_node>(filler, min_size, max_size, id);
 }
 
@@ -201,7 +201,7 @@ auto syntax_parser::make_compound_bitfield_node(fields_list *fields) -> field_no
 
 auto syntax_parser::make_compound_bitfield_node(fields_list *fields, const std::string &name) -> field_node *
 {
-    auto id = mapper.find_register_field_name(name);
+    auto id = mapper.register_field(name);
     return node_alloc<grammar::compound_bitfield_node>(fields, id);
 }
 

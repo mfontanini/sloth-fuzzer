@@ -196,14 +196,14 @@ include/field_filler.h:
 include/functions/constraints.h:
 src/main.o: src/main.cpp include/field.h include/utils.h \
  include/field_impl.h include/field_filler.h \
- include/functions/constraints.h include/field_mapper.h include/field.h \
- include/topological_sorter.h include/parser/syntax_parser.h \
- include/parser/nodes.h include/function_nodes.h include/value_node.h \
- include/field_mapper.h include/generation_context.h include/bitfield.h \
- include/block_field.h include/exceptions.h include/compound_field.h \
- include/utils.h include/field_filler.h include/multiptr_destructor.h \
- include/generation_context.h include/executer.h include/command_parser.h \
- include/field_serializer.h
+ include/functions/constraints.h include/parser/syntax_parser.h \
+ include/parser/nodes.h include/field_mapper.h include/field.h \
+ include/function_nodes.h include/value_node.h include/field_mapper.h \
+ include/generation_context.h include/bitfield.h include/block_field.h \
+ include/exceptions.h include/compound_field.h include/utils.h \
+ include/field_filler.h include/multiptr_destructor.h \
+ include/generation_context.h include/topological_sorter.h \
+ include/executer.h include/command_parser.h include/field_serializer.h
 
 include/field.h:
 
@@ -215,15 +215,13 @@ include/field_filler.h:
 
 include/functions/constraints.h:
 
-include/field_mapper.h:
-
-include/field.h:
-
-include/topological_sorter.h:
-
 include/parser/syntax_parser.h:
 
 include/parser/nodes.h:
+
+include/field_mapper.h:
+
+include/field.h:
 
 include/function_nodes.h:
 
@@ -248,6 +246,8 @@ include/field_filler.h:
 include/multiptr_destructor.h:
 
 include/generation_context.h:
+
+include/topological_sorter.h:
 
 include/executer.h:
 
