@@ -8,6 +8,18 @@ compound_field_impl::compound_field_impl()
     
 }
 
+compound_field_impl::compound_field_impl(const compound_field_impl &f)
+: fields(f.fields), last_iterator(indexes.end()), total_size(f.total_size)
+{
+    
+}
+
+compound_field_impl& compound_field_impl::operator=(compound_field_impl f)
+{
+    swap(*this, f);
+    return *this;
+}
+
 void compound_field_impl::add_field(field child)
 {
     fields.push_back(std::move(child));
@@ -32,7 +44,7 @@ void compound_field_impl::prepare(generation_context &)
     indexes.clear();
     size_t index = 0;
     for(auto &child : fields) {
-        indexes.insert({ index, child });
+        indexes.insert({ index, &child });
         index += child.size();
     }
     last_iterator = indexes.begin();
@@ -42,13 +54,13 @@ void compound_field_impl::prepare(generation_context &)
 void compound_field_impl::set(size_t index, value_type value)
 {
     auto iter = find_index(index);
-    iter->second.get()[index - iter->first] = value;
+    (*iter->second)[index - iter->first] = value;
 }
 
 auto compound_field_impl::get(size_t index) const -> value_type
 {
     auto iter = find_index(index);
-    return iter->second.get()[index - iter->first];
+    return (*iter->second)[index - iter->first];
 }
 
 size_t compound_field_impl::size() const
@@ -83,4 +95,14 @@ auto compound_field_impl::dependent_fields() const -> dependents_type
 void compound_field_impl::clear_children()
 {
     fields.clear();
+}
+
+void swap(compound_field_impl &lhs, compound_field_impl &rhs) 
+{
+    using std::swap;
+    
+    swap(lhs.fields, rhs.fields);
+    swap(lhs.indexes, rhs.indexes);
+    swap(lhs.last_iterator, rhs.last_iterator);
+    swap(lhs.total_size, rhs.total_size);
 }
