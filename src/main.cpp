@@ -68,7 +68,8 @@ field parse_file(const std::string &template_file)
     return root_field;
 }
 
-void run(const std::string &template_file, const std::string &cmd, const std::string &file_name) 
+void run(const std::string &template_file, const std::string &cmd, 
+  const std::string &file_name, const std::string &output_base) 
 {
     executer exec(cmd);
     field root = parse_file(template_file);
@@ -84,7 +85,7 @@ void run(const std::string &template_file, const std::string &cmd, const std::st
                 std::cout.flush();
             }
             if(exec.execute(f.begin(), f.end(), file_name) == executer::exec_status::killed_by_signal) {
-                boost::filesystem::rename(file_name, "/dev/shm/carlos");
+                boost::filesystem::rename(file_name, output_base + '-' + std::to_string(crashed_count));
                 crashed_count++;
             }
         }
@@ -92,7 +93,12 @@ void run(const std::string &template_file, const std::string &cmd, const std::st
 }
 
 void print_usage(char *name) {
-    std::cout << "Usage: " << name << " [-t <TEMPLATE>] [-o <OUT_FILE>] COMMAND" << std::endl;
+    std::cout << "Usage: " << name << " [OPTIONS] COMMAND" << std::endl;
+    std::cout << "\n";
+    std::cout << "OPTIONS can be:" << std::endl;
+    std::cout << "\t-t <TEMPLATE>" << std::endl;
+    std::cout << "\t-o <OUTPUT_FILE>" << std::endl;
+    std::cout << "\t-r <RESULT_BASE>" << std::endl;
 }
 
 std::string join_args(char **start, char **end) {
@@ -115,9 +121,7 @@ int main(int argc, char *argv[]) {
         print_usage(*argv);
         return EXIT_FAILURE;
     }
-    std::string template_file;
-    std::string command;
-    std::string file_name = "/dev/shm/fuzzer";
+    std::string template_file, command, output_base("/tmp/fuzzer"), file_name("/dev/shm/fuzzer");
     char **ptr = argv + 1, **end = argv + argc;
     while(ptr < end) {
         if(*ptr[0] == '-' && std::distance(ptr, end) < 2) {
@@ -131,6 +135,10 @@ int main(int argc, char *argv[]) {
         }
         else if(!std::strcmp(*ptr, "-o")) {
             file_name = ptr[1];
+            ptr += 2;
+        }
+        else if(!std::strcmp(*ptr, "-r")) {
+            output_base = ptr[1];
             ptr += 2;
         }
         else {
@@ -154,7 +162,7 @@ int main(int argc, char *argv[]) {
     command = join_args(ptr, argv + argc);
     
     try {
-        run(template_file, command, file_name);
+        run(template_file, command, file_name, output_base);
         std::cout << std::endl;
     }
     catch(std::exception &ex) {
