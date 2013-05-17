@@ -42,30 +42,10 @@
 #include "function_nodes.h"
 #include "bitfield.h"
 #include "compound_field.h"
+#include "choice_field.h"
 #include "utils.h"
 
 namespace grammar {
-template<typename Ret, typename... Args>
-class generic_node {
-public:
-    typedef std::function<Ret(field_mapper&, Args...)> function_type;
-
-    generic_node(function_type function)
-    : function(std::move(function))
-    {
-        
-        
-    }
-
-    template<typename... Ts>
-    Ret allocate(field_mapper &mapper, Ts&&... args) const
-    {
-        return function(mapper, std::forward<Ts>(args)...);
-    }
-private:
-    function_type function;
-};
-    
 class field_node;
 typedef std::vector<field_node*> fields_list;
 
@@ -276,55 +256,13 @@ private:
 template<typename Impl, typename Tag>
 class generic_compound_field_node : public field_node {
 public:
-    generic_compound_field_node(fields_list *fields, identifier_type id = field::invalid_id)
-    : fields(fields), id(id)
-    {
-        
-    }
+    generic_compound_field_node(fields_list *fields, identifier_type id = field::invalid_id);
 
-    return_type allocate(field_mapper &mapper) const
-    {
-        auto impl = make_unique<Impl>();
-        for(const auto &i : *fields)
-            impl->add_field(i->allocate(mapper));
-        return field(id, nullptr, std::move(impl));
-    }
-
-    size_t max_size() 
-    {
-        return (*std::max_element(
-            fields->begin(),
-            fields->end(),
-            [](const field_node *lhs, const field_node *rhs) { 
-                return lhs->max_size() < rhs->max_size();
-            }
-        ))->max_size();
-    }
-
-    size_t min_size() 
-    {
-        return (*std::min_element(
-            fields->begin(),
-            fields->end(),
-            [](const field_node *lhs, const field_node *rhs) { 
-                return lhs->min_size() < rhs->min_size();
-            }
-        ))->min_size();
-    }
-    
-    std::string to_string() const 
-    {
-        return Tag::str_repr;
-    }
-    
-    void check_constraints() const
-    {
-        for_each(
-            fields->begin(),
-            fields->end(),
-            [](const field_node* f) { f->check_constraints(); }
-        );
-    }
+    return_type allocate(field_mapper &mapper) const;
+    size_t max_size();
+    size_t min_size();
+    std::string to_string() const;
+    void check_constraints() const;
 private:
     fields_list *fields;
     field::identifier_type id;
@@ -338,6 +276,10 @@ struct compound_bitfield_node_tag {
     static const std::string str_repr;
 };
 
+struct choice_field_node_tag {
+    static const std::string str_repr;
+};
+
 typedef generic_compound_field_node<
     ::compound_field_impl, 
     compound_field_node_tag> compound_field_node;
@@ -345,6 +287,10 @@ typedef generic_compound_field_node<
 typedef generic_compound_field_node<
     ::compound_bitfield_impl,
     compound_bitfield_node_tag> compound_bitfield_node;
+
+typedef generic_compound_field_node<
+    ::choice_field_impl,
+    choice_field_node_tag> choice_field_node;
 
 class template_def_node {
 public:
@@ -365,6 +311,69 @@ private:
     template_def_node* definition;
     size_t min_sz, max_sz;
 };
+
+
+template<typename Impl, typename Tag>
+generic_compound_field_node<Impl, Tag>::generic_compound_field_node(
+  fields_list *fields, identifier_type id)
+: fields(fields), id(id)
+{
+    
+}
+
+template<typename Impl, typename Tag>
+auto generic_compound_field_node<Impl, Tag>::allocate(field_mapper &mapper) const
+-> return_type
+{
+    std::vector<field> allocated;
+    for(const auto &i : *fields)
+        allocated.push_back(i->allocate(mapper));
+    auto impl = make_unique<Impl>(
+        std::make_move_iterator(allocated.begin()),
+        std::make_move_iterator(allocated.end())
+    );
+    return field(id, nullptr, std::move(impl));
+}
+
+template<typename Impl, typename Tag>
+size_t generic_compound_field_node<Impl, Tag>::max_size() 
+{
+    return (*std::max_element(
+        fields->begin(),
+        fields->end(),
+        [](const field_node *lhs, const field_node *rhs) { 
+            return lhs->max_size() < rhs->max_size();
+        }
+    ))->max_size();
+}
+
+template<typename Impl, typename Tag>
+size_t generic_compound_field_node<Impl, Tag>::min_size() 
+{
+    return (*std::min_element(
+        fields->begin(),
+        fields->end(),
+        [](const field_node *lhs, const field_node *rhs) { 
+            return lhs->min_size() < rhs->min_size();
+        }
+    ))->min_size();
+}
+
+template<typename Impl, typename Tag>
+std::string generic_compound_field_node<Impl, Tag>::to_string() const 
+{
+    return Tag::str_repr;
+}
+
+template<typename Impl, typename Tag>
+void generic_compound_field_node<Impl, Tag>::check_constraints() const
+{
+    for_each(
+        fields->begin(),
+        fields->end(),
+        [](const field_node* f) { f->check_constraints(); }
+    );
+}
 
 } // namespace grammar
 

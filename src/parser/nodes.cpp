@@ -28,6 +28,7 @@
  */
 
 #include <sstream>
+#include <iterator>
 #include "parser/nodes.h"
 #include "functions/random.h"
 #include "const_value_node.h"
@@ -51,6 +52,7 @@ field::filler_type default_bit_filler()
 
 const std::string compound_field_node_tag::str_repr("multi_block");
 const std::string compound_bitfield_node_tag::str_repr("multi_bit");
+const std::string choice_field_node_tag::str_repr("choice");
 
 // script
 
@@ -191,7 +193,7 @@ auto bitfield_node::allocate(field_mapper &mapper) const -> return_type
 {
     return field::from_impl< ::bitfield_impl>(
         id,
-        filler ? filler->allocate(mapper) : default_filler(), 
+        filler ? filler->allocate(mapper) : default_bit_filler(), 
         size
     );
 }
@@ -274,9 +276,13 @@ template_def_node::template_def_node(fields_list *fields)
 
 field template_def_node::allocate(field_mapper &mapper, size_t min, size_t max) const
 {
-    auto compound_impl = make_unique< ::compound_field_impl>();
+    std::vector<field> allocated;
     for(const auto &i : *fields)
-        compound_impl->add_field(i->allocate(mapper));
+        allocated.push_back(i->allocate(mapper));
+    auto compound_impl = make_unique< ::compound_field_impl>(
+        std::make_move_iterator(allocated.begin()),
+        std::make_move_iterator(allocated.end())
+    );
     auto impl = make_unique< ::template_field_impl>(
                     field(nullptr, std::move(compound_impl)), 
                     min, 

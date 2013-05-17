@@ -39,13 +39,20 @@
 
 class compound_bitfield_impl : public clonable_field_impl<compound_bitfield_impl> {
 public:
+    template<typename InputIterator>
+    compound_bitfield_impl(InputIterator start, InputIterator end)
+    : fields(start, end)
+    {
+        for(const auto &f : fields)
+            data.resize(data.size() + f.size());
+    }
+
     void set(size_t index, value_type value);
     value_type get(size_t index) const;
     size_t size() const;
     size_t field_count() const;
     void prepare(generation_context &);
     
-    void add_field(field child);
     dependents_type dependent_fields() const;
     void accept_visitor(const visitor_type& visitor) const;
 private:

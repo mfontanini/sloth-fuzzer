@@ -49,12 +49,14 @@ extern "C"
     const char *error_msg;
 }
 
-%token TEMPLATE 258 BLOCK 262 TEMPLATES 261 COMPOUND_BLOCK 263 VAR_BLOCK 264 COMPOUND_BITFIELD 267 BITFIELD 268 STR_BLOCK 269
+%token TEMPLATE 258 BLOCK 262 TEMPLATES 261 COMPOUND_BLOCK 263 VAR_BLOCK 264
+%token COMPOUND_BITFIELD 267 BITFIELD 268 STR_BLOCK 269 CHOICE_FIELD 270
 %token '<' '>' ';' '+' '-' '/' '*' '{' '}' '(' ')' ','
 %token <symbol> IDENTIFIER 259 STR_CONST 265
 %token <int_val> INT_CONST 260
 
-%type <ast_field>  field block_field compound_field var_block template_field compound_bitfield bitfield
+%type <ast_field>  field block_field compound_field var_block template_field 
+%type <ast_field> choice_field compound_bitfield bitfield
 %type <ast_template_def> template_def
 %type <ast_script> script
 %type <ast_fields> fields templates bitfields
@@ -130,6 +132,8 @@ field:
     |
     compound_bitfield { $$ = $1; }
     |
+    choice_field { $$ = $1; }
+    |
     error ';' { num_errors++; yyerrok; }
 ;
 
@@ -203,6 +207,17 @@ compound_bitfield:
         $$ = grammar_syntax_parser->make_compound_bitfield_node($4, *$2);
     } 
 ;
+
+choice_field:
+    CHOICE_FIELD '{' fields '}' ';' {
+        $$ = grammar_syntax_parser->make_choice_field_node($3);
+    } 
+    |
+    CHOICE_FIELD IDENTIFIER '{' fields '}' ';' {
+        $$ = grammar_syntax_parser->make_choice_field_node($4, *$2);
+    } 
+;
+
 
 bitfields:
     bitfield {

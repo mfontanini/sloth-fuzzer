@@ -110,6 +110,11 @@ public:
     field_node *make_compound_bitfield_node(fields_list *fields);
     field_node *make_compound_bitfield_node(fields_list *fields, const std::string &name);
 
+    // choice field
+
+    field_node *make_choice_field_node(fields_list *fields);
+    field_node *make_choice_field_node(fields_list *fields, const std::string &name);
+
     // template field
 
     field_node *make_template_field_node(const std::string &template_name, 

@@ -22,6 +22,28 @@ include/exceptions.h:
 include/utils.h:
 
 include/exceptions.h:
+src/choice_field.o: src/choice_field.cpp include/choice_field.h \
+ include/field.h include/utils.h include/field_impl.h \
+ include/field_filler.h include/functions/constraints.h \
+ include/generation_context.h include/field_mapper.h include/utils.h
+
+include/choice_field.h:
+
+include/field.h:
+
+include/utils.h:
+
+include/field_impl.h:
+
+include/field_filler.h:
+
+include/functions/constraints.h:
+
+include/generation_context.h:
+
+include/field_mapper.h:
+
+include/utils.h:
 src/command_parser.o: src/command_parser.cpp include/command_parser.h
 
 include/command_parser.h:
@@ -200,8 +222,8 @@ src/main.o: src/main.cpp include/field.h include/utils.h \
  include/parser/nodes.h include/field_mapper.h include/field.h \
  include/function_nodes.h include/value_node.h include/field_mapper.h \
  include/generation_context.h include/bitfield.h include/block_field.h \
- include/exceptions.h include/compound_field.h include/utils.h \
- include/field_filler.h include/multiptr_destructor.h \
+ include/exceptions.h include/compound_field.h include/choice_field.h \
+ include/utils.h include/field_filler.h include/multiptr_destructor.h \
  include/generation_context.h include/topological_sorter.h \
  include/executer.h include/command_parser.h include/field_serializer.h
 
@@ -238,6 +260,8 @@ include/block_field.h:
 include/exceptions.h:
 
 include/compound_field.h:
+
+include/choice_field.h:
 
 include/utils.h:
 
@@ -338,8 +362,8 @@ src/functions/constraints.o: src/functions/constraints.cpp \
  include/functions/constraints.h include/field_mapper.h include/field.h \
  include/function_nodes.h include/value_node.h include/field_mapper.h \
  include/generation_context.h include/bitfield.h include/block_field.h \
- include/exceptions.h include/compound_field.h include/utils.h \
- include/exceptions.h
+ include/exceptions.h include/compound_field.h include/choice_field.h \
+ include/utils.h include/exceptions.h
 
 include/functions/constraints.h:
 
@@ -374,6 +398,8 @@ include/block_field.h:
 include/exceptions.h:
 
 include/compound_field.h:
+
+include/choice_field.h:
 
 include/utils.h:
 
@@ -476,8 +502,8 @@ src/parser/syntax_parser.o: src/parser/syntax_parser.cpp \
  include/functions/constraints.h include/field_mapper.h include/field.h \
  include/function_nodes.h include/value_node.h include/field_mapper.h \
  include/generation_context.h include/bitfield.h include/block_field.h \
- include/exceptions.h include/compound_field.h include/utils.h \
- include/field_filler.h include/multiptr_destructor.h \
+ include/exceptions.h include/compound_field.h include/choice_field.h \
+ include/utils.h include/field_filler.h include/multiptr_destructor.h \
  include/exceptions.h include/functions/md5.h \
  include/functions/constraints.h include/unary_field_function.h \
  include/functions/misc.h include/functions/crc.h \
@@ -520,6 +546,8 @@ include/exceptions.h:
 
 include/compound_field.h:
 
+include/choice_field.h:
+
 include/utils.h:
 
 include/field_filler.h:
@@ -557,10 +585,10 @@ src/parser/nodes.o: src/parser/nodes.cpp include/parser/nodes.h \
  include/field_mapper.h include/field.h include/function_nodes.h \
  include/value_node.h include/field_mapper.h include/generation_context.h \
  include/bitfield.h include/block_field.h include/exceptions.h \
- include/compound_field.h include/utils.h include/functions/random.h \
- include/field_filler.h include/const_value_node.h \
- include/function_value_filler.h include/block_field.h \
- include/template_field.h include/compound_field.h \
+ include/compound_field.h include/choice_field.h include/utils.h \
+ include/functions/random.h include/field_filler.h \
+ include/const_value_node.h include/function_value_filler.h \
+ include/block_field.h include/template_field.h include/compound_field.h \
  include/variable_block_field.h include/exceptions.h
 
 include/parser/nodes.h:
@@ -594,6 +622,8 @@ include/block_field.h:
 include/exceptions.h:
 
 include/compound_field.h:
+
+include/choice_field.h:
 
 include/utils.h:
 

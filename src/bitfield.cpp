@@ -73,12 +73,6 @@ void compound_bitfield_impl::prepare(generation_context &)
     }
 }
 
-void compound_bitfield_impl::add_field(field child)
-{
-    data.resize(data.size() + child.size());
-    fields.push_back(std::move(child));
-}
-
 auto compound_bitfield_impl::dependent_fields() const -> dependents_type
 {
     dependents_type output;

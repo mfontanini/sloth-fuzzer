@@ -38,6 +38,13 @@
 
 class compound_field_impl : public clonable_field_impl<compound_field_impl> {
 public:
+    template<typename InputIterator>
+    compound_field_impl(InputIterator start, InputIterator end)
+    : fields(start, end), last_iterator(indexes.end()), total_size(0)
+    {
+        
+    }
+    
     compound_field_impl();
     compound_field_impl(const compound_field_impl &f);
     compound_field_impl(compound_field_impl&&) = default;
@@ -49,13 +56,13 @@ public:
     size_t size() const;
     size_t field_count() const;
     void accept_visitor(const visitor_type& visitor) const;
-
-    void add_field(field child);
+    
     dependents_type dependent_fields() const;
     
     friend void swap(compound_field_impl &lhs, compound_field_impl &rhs);
 protected:
     void clear_children();
+    void add_field(field child);
 private:
     typedef std::vector<field> fields_type;
     typedef std::map<size_t, field*> indexes_type;

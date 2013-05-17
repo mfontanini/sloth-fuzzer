@@ -135,10 +135,15 @@ field syntax_parser::get_root_field()
 {
     if(!script_root)
         throw parse_error();
-    auto impl = make_unique<compound_field_impl>();
     
+    std::vector<field> fields;
     for(const auto& i : script_root->fields)
-        impl->add_field(i->allocate(mapper));
+        fields.push_back(i->allocate(mapper));
+    
+    auto impl = make_unique<compound_field_impl>(
+        std::make_move_iterator(fields.begin()),
+        std::make_move_iterator(fields.end())
+    );
     
     return field(nullptr, std::move(impl));
 }
@@ -233,6 +238,19 @@ auto syntax_parser::make_compound_bitfield_node(fields_list *fields, const std::
 {
     auto id = mapper.register_field(name);
     return node_alloc<grammar::compound_bitfield_node>(fields, id);
+}
+
+// choice field
+
+auto syntax_parser::make_choice_field_node(fields_list *fields) -> field_node*
+{
+    return node_alloc<grammar::choice_field_node>(fields);
+}
+
+auto syntax_parser::make_choice_field_node(fields_list *fields, const std::string &name) -> field_node *
+{
+    auto id = mapper.find_register_field_name(name);
+    return node_alloc<grammar::choice_field_node>(fields, id);
 }
 
 // template field

@@ -61,7 +61,8 @@ enum fuzzer_identifiers {
     ERROR,
     COMPOUND_BITFIELD,
     BITFIELD,
-    STR_BLOCK
+    STR_BLOCK,
+    CHOICE_FIELD
 };
 #endif
 

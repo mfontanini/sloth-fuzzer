@@ -55,6 +55,8 @@ field parse_file(const std::string &template_file)
     syntax_parser parser;
     parser.parse(input_stream);
     
+    field root_field = std::move(parser.get_root_field());
+    
     std::vector<std::string> undefined;
     parser.get_mapper().find_non_registered_fields(std::back_inserter(undefined));
     if(!undefined.empty()) {
@@ -63,7 +65,7 @@ field parse_file(const std::string &template_file)
         throw parse_error();
     }
     
-    return std::move(parser.get_root_field());
+    return root_field;
 }
 
 void run(const std::string &template_file, const std::string &cmd, const std::string &file_name) 

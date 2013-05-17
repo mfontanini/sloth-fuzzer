@@ -131,6 +131,7 @@ OPERATOR        ("+"|"-"|"*"|"/")
 "template"          { return TEMPLATE; }
 "str_block"         { return STR_BLOCK; }
 "var_block"         { return VAR_BLOCK; }
+"choice"            { return CHOICE_FIELD; }
 "bitfield"          { return BITFIELD; }
 "multi_bit"         { return COMPOUND_BITFIELD; }
 "block"             { return BLOCK; }

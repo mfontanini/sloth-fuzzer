@@ -38,8 +38,10 @@ field::identifier_type field_mapper::register_field(std::string name)
         // this field has already been registered by someone else
         if(iter->second.second)
             throw std::runtime_error("field \"" + name + "\" already defined");
-        else
+        else {
+            iter->second.second = true;
             return iter->second.first;
+        }
     }
     
     auto id = field::generate_id();
