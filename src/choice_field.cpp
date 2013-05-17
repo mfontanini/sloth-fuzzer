@@ -27,51 +27,42 @@
  *
  */
 
-#include <set>
-#include <ctime>
-#include "topological_sorter.h"
-#include "template_field.h"
+#include <cassert>
+#include "choice_field.h"
 #include "generation_context.h"
+#include "utils.h"
 
 
-template_field_impl::template_field_impl(field tmp_field, size_t min, size_t max)
-: template_field(tmp_field), distr(min, max)
+void choice_field_impl::set(size_t index, value_type value)
 {
-    topological_sorter sorter;
-    std::set<field::identifier_type> unresolved_set;
-    ordered = sorter.topological_sort(template_field, unresolved_set);
-    unresolved.assign(unresolved_set.begin(), unresolved_set.end());
+    #ifdef FUZZER_DEBUG
+        assert(current_choice != nullptr);
+    #endif
+    (*current_choice)[index] = value;
 }
 
-void template_field_impl::prepare(generation_context &ctx)
+auto choice_field_impl::get(size_t index) const -> value_type
 {
-    auto num_fields = distr(ctx.get_random_generator());
-    clear_children();
-    std::random_device device;
-    for(auto i = size_t(); i < num_fields; ++i) {
-        field f = template_field;
-        generation_context local_ctx(device());
-        field_mapper &mapper = local_ctx.get_mapper();
-        mapper.identify_fields(f);
-        for(const auto &id : unresolved)
-            mapper.register_field(id, ctx.get_mapper().find_field(id));
-        for(const auto &id : ordered) {
-            auto &q = const_cast<field&>(mapper.find_field(id));
-            q.prepare(ctx);
-            q.fill(local_ctx);
-        }
-        add_field(std::move(f));
-    }
-    
-    compound_field_impl::prepare(ctx);
+    #ifdef FUZZER_DEBUG
+        assert(current_choice != nullptr);
+    #endif
+    return (*current_choice)[index];
 }
 
-auto template_field_impl::dependent_fields() const -> dependents_type
+size_t choice_field_impl::size() const
 {
-    return unresolved;
+    return current_choice->size();
 }
 
-std::unique_ptr<field_impl> template_field_impl::clone() const 
+void choice_field_impl::prepare(generation_context &ctx)
 {
-    return make_unique<template_field_impl>(*this);
+    std::uniform_int_distribution<size_t> dist(0, choices.size() - 1);
+    current_choice = &choices[dist(ctx.get_random_generator())];
+    current_choice->prepare(ctx);
+    current_choice->fill(ctx);
+}
+
+auto choice_field_impl::dependent_fields() const -> dependents_type
+{
+    return dependents;
 }

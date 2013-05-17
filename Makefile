@@ -5,7 +5,7 @@ CXXFLAGS= -c -Wall -g -std=c++0x
 FLEX=flex
 BISON=bison
 INCLUDE = -Iinclude
-LDFLAGS= -lpthread -lcrypto -lboost_system -lboost_filesystem
+LDFLAGS= -lpthread -lcrypto 
 RM=rm
 SOURCES= $(wildcard src/*.cpp src/functions/*.cpp) src/parser/syntax_parser.cpp src/parser/nodes.cpp
 OBJECTS=$(SOURCES:.cpp=.o) src/parser/grammar.o src/parser/syntax.o

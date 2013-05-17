@@ -35,7 +35,6 @@
 #include <fstream>
 #include <sstream>
 #include <cstring>
-#include <boost/filesystem.hpp>
 #include "field.h"
 #include "parser/syntax_parser.h"
 #include "generation_context.h"
@@ -68,6 +67,17 @@ field parse_file(const std::string &template_file)
     return root_field;
 }
 
+void move_file(const std::string &from, const std::string &to) 
+{
+    if(rename(from.c_str(), to.c_str()) == -1) {
+        std::ifstream from_file(from);
+        std::ofstream to_file(to);
+        if(!from_file || !to_file)
+            throw std::runtime_error("moving file failed");
+        to_file << from_file.rdbuf();
+    }
+}
+
 void run(const std::string &template_file, const std::string &cmd, 
   const std::string &file_name, const std::string &output_base) 
 {
@@ -85,8 +95,10 @@ void run(const std::string &template_file, const std::string &cmd,
                 std::cout.flush();
             }
             if(exec.execute(f.begin(), f.end(), file_name) == executer::exec_status::killed_by_signal) {
-                boost::filesystem::rename(file_name, output_base + '-' + std::to_string(crashed_count));
+                move_file(file_name, output_base + '-' + std::to_string(crashed_count));
                 crashed_count++;
+                if(crashed_count == 10)
+                    break;
             }
         }
     }
@@ -164,6 +176,7 @@ int main(int argc, char *argv[]) {
     try {
         run(template_file, command, file_name, output_base);
         std::cout << std::endl;
+        std::cout << "generated enough samples, stopping..." << std::endl;
     }
     catch(std::exception &ex) {
         std::cout << ex.what() << ". aborting..." << std::endl;

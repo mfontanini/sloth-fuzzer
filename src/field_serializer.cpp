@@ -84,7 +84,7 @@ void field_serializer::store_field(serialization_type f)
 void field_serializer::thread_proc(field root)
 {
     // some seed plx
-    generation_context ctx(std::time(0) ^ reinterpret_cast<time_t>(&root));
+    generation_context ctx{std::random_device()()};
     topological_sorter sorter;
     auto ordered = sorter.topological_sort(root);
     ctx.get_mapper().identify_fields(root);
