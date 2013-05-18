@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
         print_usage(*argv);
         return EXIT_FAILURE;
     }
-    std::string template_file, command, output_base("/tmp/fuzzer"), file_name("/dev/shm/fuzzer");
+    std::string template_file, command, output_base("/tmp/fuzzer"), file_name("/tmp/fuzzer");
     char **ptr = argv + 1, **end = argv + argc;
     while(ptr < end) {
         if(*ptr[0] == '-' && std::distance(ptr, end) < 2) {
