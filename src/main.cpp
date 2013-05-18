@@ -105,6 +105,7 @@ void run(const std::string &template_file, const std::string &cmd,
 }
 
 void print_usage(char *name) {
+    std::cout << "sloth fuzzer v" << FUZZER_VERSION << std::endl << std::endl;
     std::cout << "Usage: " << name << " [OPTIONS] COMMAND" << std::endl;
     std::cout << "\n";
     std::cout << "OPTIONS can be:" << std::endl;

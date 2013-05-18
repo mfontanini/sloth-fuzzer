@@ -51,6 +51,20 @@
      INT_CONST = 260
    };
 #endif
+/* Tokens.  */
+#define TEMPLATE 258
+#define BLOCK 262
+#define TEMPLATES 261
+#define COMPOUND_BLOCK 263
+#define VAR_BLOCK 264
+#define COMPOUND_BITFIELD 267
+#define BITFIELD 268
+#define STR_BLOCK 269
+#define CHOICE_FIELD 270
+#define IDENTIFIER 259
+#define STR_CONST 265
+#define INT_CONST 260
+
 
 
 
@@ -74,7 +88,7 @@ typedef union YYSTYPE
 
 
 /* Line 2068 of yacc.c  */
-#line 78 "parser/grammar-output.h"
+#line 92 "parser/grammar-output.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

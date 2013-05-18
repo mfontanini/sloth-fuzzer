@@ -145,6 +145,20 @@ extern "C"
      INT_CONST = 260
    };
 #endif
+/* Tokens.  */
+#define TEMPLATE 258
+#define BLOCK 262
+#define TEMPLATES 261
+#define COMPOUND_BLOCK 263
+#define VAR_BLOCK 264
+#define COMPOUND_BITFIELD 267
+#define BITFIELD 268
+#define STR_BLOCK 269
+#define CHOICE_FIELD 270
+#define IDENTIFIER 259
+#define STR_CONST 265
+#define INT_CONST 260
+
 
 
 
@@ -168,7 +182,7 @@ typedef union YYSTYPE
 
 
 /* Line 293 of yacc.c  */
-#line 172 "parser/grammar-output"
+#line 186 "parser/grammar-output"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -193,7 +207,7 @@ typedef struct YYLTYPE
 
 
 /* Line 343 of yacc.c  */
-#line 197 "parser/grammar-output"
+#line 211 "parser/grammar-output"
 
 #ifdef short
 # undef short
@@ -2075,7 +2089,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 2079 "parser/grammar-output"
+#line 2093 "parser/grammar-output"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
