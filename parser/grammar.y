@@ -280,8 +280,7 @@ filler_function:
     IDENTIFIER '(' IDENTIFIER ')' {
         $$ = grammar_syntax_parser->make_node_filler_node(*$3, *$1);
         if($$ == nullptr) {
-            std::cerr << "Line " << curr_lineno << ": function \"" 
-                      << *$1 << "\" does not exist." << std::endl;
+            yyerror(("function \"" + *$1 + "\" does not exist").c_str());
             YYABORT;
         }
     }
@@ -321,8 +320,7 @@ expression_func:
     IDENTIFIER '(' IDENTIFIER ')' {
         $$ = grammar_syntax_parser->make_node_value_function_node(*$3, *$1);
         if($$ == nullptr) {
-            std::cerr << "Line " << curr_lineno << ": function \"" 
-                      << $1 << "\" does not exist." << std::endl;
+            yyerror(("function \"" + *$1 + "\" does not exist").c_str());
             YYABORT;
         }
     }

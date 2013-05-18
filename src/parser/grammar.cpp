@@ -517,8 +517,8 @@ static const yytype_uint16 yyrline[] =
      127,   129,   131,   133,   135,   137,   141,   145,   149,   153,
      157,   164,   174,   178,   182,   186,   192,   196,   202,   206,
      212,   216,   223,   228,   234,   238,   242,   246,   252,   256,
-     260,   266,   270,   274,   280,   291,   295,   299,   303,   307,
-     311,   315,   321,   330
+     260,   266,   270,   274,   280,   290,   294,   298,   302,   306,
+     310,   314,   320,   328
 };
 #endif
 
@@ -1981,8 +1981,7 @@ yyreduce:
     {
         (yyval.ast_filler) = grammar_syntax_parser->make_node_filler_node(*(yyvsp[(3) - (4)].symbol), *(yyvsp[(1) - (4)].symbol));
         if((yyval.ast_filler) == nullptr) {
-            std::cerr << "Line " << curr_lineno << ": function \"" 
-                      << *(yyvsp[(1) - (4)].symbol) << "\" does not exist." << std::endl;
+            yyerror(("function \"" + *(yyvsp[(1) - (4)].symbol) + "\" does not exist").c_str());
             YYABORT;
         }
     }
@@ -1991,7 +1990,7 @@ yyreduce:
   case 45:
 
 /* Line 1806 of yacc.c  */
-#line 291 "parser/grammar.y"
+#line 290 "parser/grammar.y"
     {
         (yyval.ast_value_node) = grammar_syntax_parser->make_const_value_node((yyvsp[(1) - (1)].int_val));
     }
@@ -2000,7 +1999,7 @@ yyreduce:
   case 46:
 
 /* Line 1806 of yacc.c  */
-#line 295 "parser/grammar.y"
+#line 294 "parser/grammar.y"
     { 
         (yyval.ast_value_node) = grammar_syntax_parser->make_node_value_node(*(yyvsp[(1) - (1)].symbol));
     }
@@ -2009,7 +2008,7 @@ yyreduce:
   case 47:
 
 /* Line 1806 of yacc.c  */
-#line 299 "parser/grammar.y"
+#line 298 "parser/grammar.y"
     {
         (yyval.ast_value_node) = (yyvsp[(2) - (3)].ast_value_node);
     }
@@ -2018,7 +2017,7 @@ yyreduce:
   case 48:
 
 /* Line 1806 of yacc.c  */
-#line 303 "parser/grammar.y"
+#line 302 "parser/grammar.y"
     {
         (yyval.ast_value_node) = grammar_syntax_parser->make_binary_function_value_node<plus_function_node>((yyvsp[(1) - (3)].ast_value_node), (yyvsp[(3) - (3)].ast_value_node));
     }
@@ -2027,7 +2026,7 @@ yyreduce:
   case 49:
 
 /* Line 1806 of yacc.c  */
-#line 307 "parser/grammar.y"
+#line 306 "parser/grammar.y"
     {
         (yyval.ast_value_node) = grammar_syntax_parser->make_binary_function_value_node<minus_function_node>((yyvsp[(1) - (3)].ast_value_node), (yyvsp[(3) - (3)].ast_value_node));
     }
@@ -2036,7 +2035,7 @@ yyreduce:
   case 50:
 
 /* Line 1806 of yacc.c  */
-#line 311 "parser/grammar.y"
+#line 310 "parser/grammar.y"
     {
         (yyval.ast_value_node) = grammar_syntax_parser->make_binary_function_value_node<divides_function_node>((yyvsp[(1) - (3)].ast_value_node), (yyvsp[(3) - (3)].ast_value_node));
     }
@@ -2045,7 +2044,7 @@ yyreduce:
   case 51:
 
 /* Line 1806 of yacc.c  */
-#line 315 "parser/grammar.y"
+#line 314 "parser/grammar.y"
     {
         (yyval.ast_value_node) = grammar_syntax_parser->make_binary_function_value_node<multiplies_function_node>((yyvsp[(1) - (3)].ast_value_node), (yyvsp[(3) - (3)].ast_value_node));
     }
@@ -2054,12 +2053,11 @@ yyreduce:
   case 52:
 
 /* Line 1806 of yacc.c  */
-#line 321 "parser/grammar.y"
+#line 320 "parser/grammar.y"
     {
         (yyval.ast_value_node) = grammar_syntax_parser->make_node_value_function_node(*(yyvsp[(3) - (4)].symbol), *(yyvsp[(1) - (4)].symbol));
         if((yyval.ast_value_node) == nullptr) {
-            std::cerr << "Line " << curr_lineno << ": function \"" 
-                      << (yyvsp[(1) - (4)].symbol) << "\" does not exist." << std::endl;
+            yyerror(("function \"" + *(yyvsp[(1) - (4)].symbol) + "\" does not exist").c_str());
             YYABORT;
         }
     }
@@ -2068,7 +2066,7 @@ yyreduce:
   case 53:
 
 /* Line 1806 of yacc.c  */
-#line 330 "parser/grammar.y"
+#line 328 "parser/grammar.y"
     {
         (yyval.ast_value_node) = (yyvsp[(1) - (1)].ast_value_node);
     }
@@ -2077,7 +2075,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 2081 "parser/grammar-output"
+#line 2079 "parser/grammar-output"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2315,7 +2313,7 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 335 "parser/grammar.y"
+#line 333 "parser/grammar.y"
 
 
 

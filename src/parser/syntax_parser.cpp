@@ -33,7 +33,7 @@
 #include "compound_field.h"
 #include "exceptions.h"
 #include "field.h"
-#include "functions/md5.h"
+#include "functions/hashing.h"
 #include "functions/misc.h"
 #include "functions/crc.h"
 #include "functions/random.h"
@@ -69,6 +69,12 @@ syntax_parser::syntax_parser()
             return node_alloc<grammar::function_filler_node<md5_function>>(id); 
         }
     );
+    register_filler_function(
+        "sha1", 
+        [&](identifier_type id) { 
+            return node_alloc<grammar::function_filler_node<sha1_function>>(id); 
+        }
+    );
     register_value_function(
         "size", 
         [&](identifier_type id) { 
@@ -86,7 +92,7 @@ syntax_parser::syntax_parser()
         }
     );
     register_value_function(
-        "crc", 
+        "crc32", 
         [&](identifier_type id) {
             return node_alloc<grammar::value_function_node<crc32_function>>(
                 id

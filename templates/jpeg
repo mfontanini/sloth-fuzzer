@@ -8,11 +8,8 @@ templates {
     };
 };
 
-block<2> = "\xff\xd8";
-block<2> = "\xff\xe0";
+str_block = "\xff\xd8\xff\xe0";
 block<2> = 16;
-str_block = "JFIF\x00";
-block<2> version = "\x01\x02";
-block<8> units = 0;
-
-template<segment, 1, 200>;
+str_block = "JFIF\x00\x01\x02";
+block<8> = 0; # units
+template<segment, 0, 200>;

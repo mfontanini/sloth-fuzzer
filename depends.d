@@ -434,15 +434,15 @@ include/field_mapper.h:
 include/field.h:
 
 include/field_mapper.h:
-src/functions/md5.o: src/functions/md5.cpp include/functions/md5.h \
- include/functions/constraints.h include/unary_field_function.h \
- include/field.h include/utils.h include/field_impl.h \
- include/field_filler.h include/functions/constraints.h \
- include/value_node.h include/generation_context.h include/field_mapper.h \
- include/field.h include/exceptions.h include/field_mapper.h \
- include/utils.h
+src/functions/hashing.o: src/functions/hashing.cpp \
+ include/functions/hashing.h include/functions/constraints.h \
+ include/unary_field_function.h include/field.h include/utils.h \
+ include/field_impl.h include/field_filler.h \
+ include/functions/constraints.h include/value_node.h \
+ include/generation_context.h include/field_mapper.h include/field.h \
+ include/exceptions.h include/field_mapper.h include/utils.h
 
-include/functions/md5.h:
+include/functions/hashing.h:
 
 include/functions/constraints.h:
 
@@ -504,7 +504,7 @@ src/parser/syntax_parser.o: src/parser/syntax_parser.cpp \
  include/generation_context.h include/bitfield.h include/block_field.h \
  include/exceptions.h include/compound_field.h include/choice_field.h \
  include/utils.h include/field_filler.h include/multiptr_destructor.h \
- include/exceptions.h include/functions/md5.h \
+ include/exceptions.h include/functions/hashing.h \
  include/functions/constraints.h include/unary_field_function.h \
  include/functions/misc.h include/functions/crc.h \
  include/functions/random.h include/block_field.h \
@@ -556,7 +556,7 @@ include/multiptr_destructor.h:
 
 include/exceptions.h:
 
-include/functions/md5.h:
+include/functions/hashing.h:
 
 include/functions/constraints.h:
 
