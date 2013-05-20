@@ -137,11 +137,14 @@ include/field.h:
 include/generation_context.h:
 
 include/field_mapper.h:
-src/field_impl.o: src/field_impl.cpp include/field_impl.h include/utils.h
+src/field_impl.o: src/field_impl.cpp include/field_impl.h include/utils.h \
+ include/exceptions.h
 
 include/field_impl.h:
 
 include/utils.h:
+
+include/exceptions.h:
 src/field_mapper.o: src/field_mapper.cpp include/field_mapper.h \
  include/field.h include/utils.h include/field_impl.h \
  include/field_filler.h include/functions/constraints.h
@@ -339,7 +342,8 @@ include/field.h:
 src/variable_block_field.o: src/variable_block_field.cpp \
  include/variable_block_field.h include/field_impl.h include/utils.h \
  include/generation_context.h include/field_mapper.h include/field.h \
- include/field_filler.h include/functions/constraints.h
+ include/field_filler.h include/functions/constraints.h \
+ include/exceptions.h
 
 include/variable_block_field.h:
 
@@ -356,6 +360,8 @@ include/field.h:
 include/field_filler.h:
 
 include/functions/constraints.h:
+
+include/exceptions.h:
 src/functions/constraints.o: src/functions/constraints.cpp \
  include/functions/constraints.h include/parser/nodes.h include/field.h \
  include/utils.h include/field_impl.h include/field_filler.h \
@@ -363,7 +369,7 @@ src/functions/constraints.o: src/functions/constraints.cpp \
  include/function_nodes.h include/value_node.h include/field_mapper.h \
  include/generation_context.h include/bitfield.h include/block_field.h \
  include/exceptions.h include/compound_field.h include/choice_field.h \
- include/utils.h include/exceptions.h
+ include/utils.h include/exceptions.h include/block_field.h
 
 include/functions/constraints.h:
 
@@ -404,6 +410,8 @@ include/choice_field.h:
 include/utils.h:
 
 include/exceptions.h:
+
+include/block_field.h:
 src/functions/crc.o: src/functions/crc.cpp include/functions/crc.h \
  include/unary_field_function.h include/field.h include/utils.h \
  include/field_impl.h include/field_filler.h \

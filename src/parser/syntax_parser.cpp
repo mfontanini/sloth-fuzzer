@@ -63,42 +63,11 @@ field::filler_type default_bit_filler() {
 
 syntax_parser::syntax_parser()
 {
-    register_filler_function(
-        "md5", 
-        [&](identifier_type id) { 
-            return node_alloc<grammar::function_filler_node<md5_function>>(id); 
-        }
-    );
-    register_filler_function(
-        "sha1", 
-        [&](identifier_type id) { 
-            return node_alloc<grammar::function_filler_node<sha1_function>>(id); 
-        }
-    );
-    register_value_function(
-        "size", 
-        [&](identifier_type id) { 
-            return node_alloc<grammar::value_function_node<size_function>>(
-                id
-            );
-        }
-    );
-    register_value_function(
-        "count", 
-        [&](identifier_type id) {
-            return node_alloc<grammar::value_function_node<field_count_function>>(
-                id
-            );
-        }
-    );
-    register_value_function(
-        "crc32", 
-        [&](identifier_type id) {
-            return node_alloc<grammar::value_function_node<crc32_function>>(
-                id
-            );
-        }
-    );
+    register_filler_function<md5_function>("md5");
+    register_filler_function<sha1_function>("sha1");
+    register_value_function<size_function>("size");
+    register_value_function<field_count_function>("count");
+    register_value_function<crc32_function>("crc32");
 }
 
 void syntax_parser::parse(const std::string &file_name)

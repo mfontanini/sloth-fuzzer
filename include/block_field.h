@@ -32,11 +32,13 @@
 
 #include <vector>
 #include "field_impl.h"
+#include "exceptions.h"
 
 template<typename Container>
 class generic_block_field_impl : public clonable_field_impl<generic_block_field_impl<Container>> {
 public:
     typedef Container container_type;
+    typedef field_impl::buffer_iterator buffer_iterator;
     using field_impl::get_value;
 
     generic_block_field_impl(size_t data_size)
@@ -68,6 +70,14 @@ public:
     int64_t get_value() const
     {
         return field_impl::get_value();
+    }
+
+    buffer_iterator fill_from_buffer(buffer_iterator start, buffer_iterator end)
+    {
+        if(std::distance(start, end) < static_cast<ptrdiff_t>(data.size()))
+            throw not_enough_data();
+        std::copy(start, start + data.size(), data.begin());
+        return start + data.size();
     }
 private:
     container_type data;

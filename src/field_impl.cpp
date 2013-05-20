@@ -29,6 +29,7 @@
 
 #include <cstdint>
 #include "field_impl.h"
+#include "exceptions.h"
 
 void field_impl::set_value(int64_t value)
 {
@@ -48,4 +49,24 @@ int64_t field_impl::get_value() const
         index--;
     }
     return val;
+}
+
+size_t field_impl::field_count() const 
+{ 
+    return 1; 
+}
+
+void field_impl::prepare(generation_context &) 
+{
+
+}
+
+auto field_impl::dependent_fields() const -> dependents_type 
+{ 
+    return { };
+};
+
+auto field_impl::fill_from_buffer(buffer_iterator start, buffer_iterator end) -> buffer_iterator
+{
+    throw field_cant_be_used_in_response();
 }

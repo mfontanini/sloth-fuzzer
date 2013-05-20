@@ -29,6 +29,7 @@
 
 #include "variable_block_field.h"
 #include "generation_context.h"
+#include "exceptions.h"
 
 variable_block_field_impl::variable_block_field_impl(size_t min_size, size_t max_size) 
 : distribution(min_size, max_size)
@@ -51,6 +52,19 @@ size_t variable_block_field_impl::size() const
     return data.size();
 }
 
-void variable_block_field_impl::prepare(generation_context &context) {
+void variable_block_field_impl::prepare(generation_context &context) 
+{
     data.resize(distribution(context.get_random_generator()));
+}
+
+auto variable_block_field_impl::fill_from_buffer(buffer_iterator start, 
+	buffer_iterator end) 
+-> buffer_iterator
+{
+	auto diff = std::distance(start, end);
+	if(diff < static_cast<ptrdiff_t>(distribution.min()))
+		throw not_enough_data();
+	auto iter_end = start + std::min(static_cast<ptrdiff_t>(distribution.max()), diff);
+	data.assign(start, iter_end);
+	return iter_end;
 }

@@ -55,6 +55,7 @@ public:
     
     dependents_type dependent_fields() const;
     void accept_visitor(const visitor_type& visitor) const;
+    buffer_iterator fill_from_buffer(buffer_iterator start, buffer_iterator end);
 private:
     typedef std::vector<field> fields_type;
 

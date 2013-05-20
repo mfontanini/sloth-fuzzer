@@ -44,6 +44,7 @@ public:
     value_type get(size_t index) const;
     size_t size() const;
     void prepare(generation_context &context);
+    buffer_iterator fill_from_buffer(buffer_iterator start, buffer_iterator end);
 private:
     container_type data;
     std::uniform_int_distribution<size_t> distribution;

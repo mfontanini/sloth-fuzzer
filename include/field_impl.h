@@ -43,6 +43,8 @@ class generation_context;
 class field_impl {
 public:
     typedef uint8_t value_type;
+    typedef std::vector<uint8_t> buffer_type;
+    typedef buffer_type::const_iterator buffer_iterator;
     typedef std::function<void(const field &)> visitor_type;
     typedef unsigned int identifier_type;
     typedef std::vector<identifier_type> dependents_type;
@@ -50,17 +52,16 @@ public:
     virtual ~field_impl() = default;
     
     virtual std::unique_ptr<field_impl> clone() const = 0;
-    virtual void prepare(generation_context &) { };
+    virtual void prepare(generation_context &);
     virtual void set(size_t index, value_type value) = 0;
     virtual value_type get(size_t index) const = 0;
     virtual size_t size() const = 0;
-    virtual size_t field_count() const { return 1; };
+    virtual size_t field_count() const;
     virtual void accept_visitor(const visitor_type& visitor) const { };
-    virtual dependents_type dependent_fields() const { 
-        return { };
-    };
+    virtual dependents_type dependent_fields() const;
     virtual void set_value(int64_t value);
     virtual int64_t get_value() const;
+    virtual buffer_iterator fill_from_buffer(buffer_iterator start, buffer_iterator end);
 private:
 
 };

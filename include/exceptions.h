@@ -37,7 +37,17 @@ public:
     const char *what() const throw();
 };
 
+class not_enough_data : public std::exception {
+public:
+    const char *what() const throw();
+};
+
 class dependency_loop_error : public std::exception {
+public:
+    const char *what() const throw();
+};
+
+class field_cant_be_used_in_response : public std::exception {
 public:
     const char *what() const throw();
 };

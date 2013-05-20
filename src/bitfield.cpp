@@ -91,3 +91,15 @@ void compound_bitfield_impl::accept_visitor(const visitor_type& visitor) const
         f.accept_visitor(visitor);
     }
 }
+
+auto compound_bitfield_impl::fill_from_buffer(buffer_iterator start, buffer_iterator end) 
+-> buffer_iterator
+{
+    size_t index{}, total = size();
+    if(std::distance(start, end) < static_cast<ptrdiff_t>(total))
+        throw not_enough_data();
+    while(index < total) {
+        set(index++, *start++);
+    }
+    return start;
+}

@@ -34,6 +34,11 @@ const char *invalid_field_size::what() const throw()
     return "invalid field size";
 }
 
+const char *not_enough_data::what() const throw() 
+{
+    return "not enough data";
+}
+
 const char *dependency_loop_error::what() const throw() 
 {
     return "dependency loop error";
@@ -47,6 +52,11 @@ const char *parse_error::what() const throw()
 const char *unprepared_field::what() const throw() 
 {
     return "unprepared field";
+}
+
+const char *field_cant_be_used_in_response::what() const throw() 
+{
+    return "field can't be used in response";
 }
 
 const char *file_open_exception::what() const throw() 

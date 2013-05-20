@@ -60,6 +60,7 @@ public:
     typedef std::unique_ptr<field_impl> unique_impl;
     typedef std::shared_ptr<field_filler> filler_type;
     typedef field_impl::dependents_type dependents_type;
+    typedef field_impl::buffer_iterator buffer_iterator;
     
     static constexpr identifier_type invalid_id = 0;
 
@@ -80,6 +81,7 @@ public:
     size_t field_count() const;
     void prepare(generation_context &context);
     void fill(generation_context &context);
+    buffer_iterator fill_from_buffer(buffer_iterator start, buffer_iterator end);
     
     void accept_visitor(const visitor_type &visitor) const;
     

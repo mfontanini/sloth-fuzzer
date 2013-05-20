@@ -124,6 +124,11 @@ void field::fill(generation_context &context)
         filler->fill(*this, context);
 }
 
+auto field::fill_from_buffer(buffer_iterator start, buffer_iterator end) -> buffer_iterator
+{
+    return impl->fill_from_buffer(start, end);
+}
+
 void field::set_value(int64_t value)
 {
     if(value == 0.0)

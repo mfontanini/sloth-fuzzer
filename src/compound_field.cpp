@@ -109,6 +109,13 @@ void compound_field_impl::accept_visitor(const visitor_type& visitor) const
     }
 }
 
+auto compound_field_impl::fill_from_buffer(buffer_iterator start, buffer_iterator end) -> buffer_iterator
+{
+    for(auto &f : fields)
+        start = f.fill_from_buffer(start, end);
+    return start;
+}
+
 auto compound_field_impl::dependent_fields() const -> dependents_type
 {
     dependents_type output;

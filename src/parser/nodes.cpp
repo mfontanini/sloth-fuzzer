@@ -118,6 +118,11 @@ void const_string_node::check_constraints(const field_node &f) const
         throw ast_field_too_small(f.get_line_number(), f.to_string(), value);
 }
 
+std::unique_ptr<field_impl> const_string_node::field_impl_from_constraint() const
+{
+    return make_unique< ::block_field_impl>(value.size());
+}
+
 // function_value_filler_node
 
 function_value_filler_node::function_value_filler_node(value_node *value)

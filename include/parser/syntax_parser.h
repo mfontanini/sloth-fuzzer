@@ -178,6 +178,28 @@ private:
         return ptr;
     }
 
+    template<typename T>
+    void register_filler_function(const std::string &name)
+    {
+        register_filler_function(
+            name, 
+            [&](identifier_type id) { 
+                return node_alloc<grammar::function_filler_node<T>>(id); 
+            }
+        );
+    }
+
+    template<typename T>
+    void register_value_function(const std::string &name)
+    {
+        register_value_function(
+            name, 
+            [&](identifier_type id) { 
+                return node_alloc<grammar::value_function_node<T>>(id); 
+            }
+        );
+    }
+
     filler_node* allocate_filler_function(const std::string &name, identifier_type id);
     value_node* allocate_value_function(const std::string &name, identifier_type id);
     grammar::script* script_root;

@@ -142,6 +142,7 @@ public:
     
     return_type allocate(field_mapper &mapper) const;
     void check_constraints(const field_node &f) const;
+    std::unique_ptr<field_impl> field_impl_from_constraint() const;
 private:
     std::string value;
 };
