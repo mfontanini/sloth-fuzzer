@@ -62,6 +62,21 @@ public:
     const char *what() const throw();
 };
 
+class constraint_too_soft : public std::exception {
+public:
+    const char *what() const throw();
+};
+
+class no_constraints : public std::exception {
+public:
+    const char *what() const throw();
+};
+
+class too_many_constraints : public std::exception {
+public:
+    const char *what() const throw();
+};
+
 class value_too_large : public std::exception {
 public:
     const char *what() const throw();
@@ -85,6 +100,11 @@ public:
 class incorrect_ast_field_size : public semantic_exception {
 public:
     incorrect_ast_field_size(size_t line, const std::string &node, size_t expected);
+};
+
+class cant_deduct_field_type : public semantic_exception {
+public:
+    cant_deduct_field_type(size_t line, const std::string &node);
 };
 
 #endif // FUZZER_EXCEPTIONS_H

@@ -46,6 +46,7 @@
      BITFIELD = 268,
      STR_BLOCK = 269,
      CHOICE_FIELD = 270,
+     AUTO_FIELD = 271,
      IDENTIFIER = 259,
      STR_CONST = 265,
      INT_CONST = 260
@@ -61,6 +62,7 @@
 #define BITFIELD 268
 #define STR_BLOCK 269
 #define CHOICE_FIELD 270
+#define AUTO_FIELD 271
 #define IDENTIFIER 259
 #define STR_CONST 265
 #define INT_CONST 260
@@ -88,7 +90,7 @@ typedef union YYSTYPE
 
 
 /* Line 2068 of yacc.c  */
-#line 92 "parser/grammar-output.h"
+#line 94 "parser/grammar-output.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

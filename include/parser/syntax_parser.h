@@ -84,10 +84,15 @@ public:
     
     /* ************** Allocator functions ******************/
     
-    // block fields
+    // block field
     
     field_node *make_block_node(filler_node *filler, size_t size);
     field_node *make_block_node(filler_node *filler, size_t size, const std::string &name);
+    
+    // auto field
+    
+    field_node *make_auto_node(filler_node *filler);
+    field_node *make_auto_node(filler_node *filler, const std::string &name);
     
     // bit field
     

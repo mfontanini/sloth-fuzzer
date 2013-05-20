@@ -188,6 +188,17 @@ auto syntax_parser::make_block_node(filler_node *filler, size_t size,
     return node_alloc<grammar::block_field_node>(filler, size, id);
 }
 
+auto syntax_parser::make_auto_node(filler_node *filler) -> field_node *
+{
+    return node_alloc<grammar::auto_field_node>(filler);
+}
+
+auto syntax_parser::make_auto_node(filler_node *filler, const std::string &name) -> field_node *
+{
+    auto id = mapper.register_field(name);
+    return node_alloc<grammar::auto_field_node>(filler, id);
+}
+
 // bitfield
 
 auto syntax_parser::make_bitfield_node(value_node *vnode, size_t size) -> field_node *

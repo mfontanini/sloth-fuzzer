@@ -59,6 +59,21 @@ const char *not_implemented::what() const throw()
     return "not implemented";
 }
 
+const char *constraint_too_soft::what() const throw() 
+{
+    return "constraint too soft";
+}
+
+const char *too_many_constraints::what() const throw() 
+{
+    return "too many constraints";
+}
+
+const char *no_constraints::what() const throw() 
+{
+    return "no constraints";
+}
+
 const char *value_too_large::what() const throw() 
 {
     return "value too large";
@@ -89,3 +104,9 @@ incorrect_ast_field_size::incorrect_ast_field_size(size_t line, const std::strin
 {
     
 }    
+
+cant_deduct_field_type::cant_deduct_field_type(size_t line, const std::string &node)
+: semantic_exception(line, "cannot deduce type for \"" + node + "\" field")
+{
+    
+}

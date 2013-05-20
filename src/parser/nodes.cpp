@@ -29,6 +29,7 @@
 
 #include <sstream>
 #include <iterator>
+#include <cassert>
 #include "parser/nodes.h"
 #include "functions/random.h"
 #include "const_value_node.h"
@@ -92,6 +93,10 @@ node_value_node::node_value_node(field::identifier_type id)
 auto node_value_node::allocate(field_mapper &mapper) -> return_type
 {
     return make_unique< ::node_value_function_node>(id);
+}
+
+std::unique_ptr<field_impl> filler_node::field_impl_from_constraint() const {
+    throw no_constraints();
 }
 
 // const_string_node
@@ -181,12 +186,41 @@ void block_field_node::check_constraints() const
         filler->check_constraints(*this);
 }
 
+// auto_field_node
+
+auto_field_node::auto_field_node(filler_node *filler, identifier_type id)
+: filler(filler), id(id)
+{
+    #ifdef FUZZER_DEBUG
+        assert(filler);
+    #endif
+}
+
+auto auto_field_node::allocate(field_mapper &mapper) const -> return_type
+{
+    try {
+        return field(
+            id, 
+            filler->allocate(mapper), 
+            filler->field_impl_from_constraint()
+        );
+    }
+    catch(std::exception &ex) {
+        throw cant_deduct_field_type(get_line_number(), to_string());
+    }
+}
+
+std::string auto_field_node::to_string() const
+{
+    return "auto";
+}
+
 // bitfield_node
 
 bitfield_node::bitfield_node(filler_node *filler, size_t size, identifier_type id)
 : filler(filler), size(size), id(id)
 {
-    
+    filler->check_constraints(*this);
 }
     
 auto bitfield_node::allocate(field_mapper &mapper) const -> return_type

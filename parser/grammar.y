@@ -51,12 +51,13 @@ extern "C"
 
 %token TEMPLATE 258 BLOCK 262 TEMPLATES 261 COMPOUND_BLOCK 263 VAR_BLOCK 264
 %token COMPOUND_BITFIELD 267 BITFIELD 268 STR_BLOCK 269 CHOICE_FIELD 270
+%token AUTO_FIELD 271
 %token '<' '>' ';' '+' '-' '/' '*' '{' '}' '(' ')' ','
 %token <symbol> IDENTIFIER 259 STR_CONST 265
 %token <int_val> INT_CONST 260
 
 %type <ast_field>  field block_field compound_field var_block template_field 
-%type <ast_field> choice_field compound_bitfield bitfield
+%type <ast_field> choice_field compound_bitfield bitfield auto_field
 %type <ast_template_def> template_def
 %type <ast_script> script
 %type <ast_fields> fields templates bitfields
@@ -134,6 +135,8 @@ field:
     |
     choice_field { $$ = $1; }
     |
+    auto_field { $$ = $1; }
+    |
     error ';' { num_errors++; yyerrok; }
 ;
 
@@ -167,6 +170,16 @@ block_field:
             $4->size(),
             *$2
         );
+    }
+;
+
+auto_field:
+    AUTO_FIELD IDENTIFIER '=' filler ';' { 
+        $$ = grammar_syntax_parser->make_auto_node($4, *$2);  
+    }
+    |
+    AUTO_FIELD '=' filler ';' { 
+        $$ = grammar_syntax_parser->make_auto_node($3);  
     }
 ;
 

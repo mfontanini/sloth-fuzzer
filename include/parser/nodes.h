@@ -133,6 +133,7 @@ public:
     
     virtual return_type allocate(field_mapper &mapper) const = 0;
     virtual void check_constraints(const field_node &f) const = 0;
+    virtual std::unique_ptr<field_impl> field_impl_from_constraint() const;
 };
 
 class const_string_node : public filler_node {
@@ -173,6 +174,14 @@ public:
     {
         for(const auto &c : Functor::get_constraints())
             c->check(f);
+    }
+    
+    std::unique_ptr<field_impl> field_impl_from_constraint() const
+    {
+        if(Functor::get_constraints().size() == 1)
+            return Functor::get_constraints()[0]->field_impl_from_constraint();
+        else
+            throw too_many_constraints();
     }
 private:
     field::identifier_type id;
@@ -218,6 +227,18 @@ public:
 private:
     filler_node *filler;
     size_t size;
+    field::identifier_type id;
+};
+
+class auto_field_node : public field_node {
+public:
+    auto_field_node(filler_node *filler, identifier_type id = field::invalid_id);
+    
+    return_type allocate(field_mapper &mapper) const;
+    
+    std::string to_string() const;
+private:
+    filler_node *filler;
     field::identifier_type id;
 };
 
