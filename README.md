@@ -21,22 +21,30 @@ programming language itself.
 *sloth* uses its own syntax to represent the file structure. For example, 
 this template file provides the structure for a basic jpeg file:
 
-<pre><code>templates { 
+```
+templates { 
     segment {
         # the first byte will be 0xff
-        block<1> = 255;
+        block<1> = 0xff;
+        # the next byte will be randomized
         block<1>;
+        # the next 2-byte field will contain the size of the data field
         block<2> = size(data);
+        # the data field will contain 0 to 2000 random bytes
         var_block<0, 2000> data;
     };
 };
- 
+
+# JPG magic number
 str_block = "\xff\xd8\xff\xe0";
 block<2> = 16;
+# JFIF identifier
 str_block = "JFIF\x00\x01\x02";
-block<8> = 0; # units
-template<segment, 0, 200>; # 0 to 200 segments
-</code></pre>
+# units
+block<8> = 0; 
+# 0 to 200 segments, as defined above
+template<segment, 0, 200>; 
+```
 
 In order to use sloth, you just need to understand a few primitives 
 which are used to define blocks.
@@ -107,7 +115,7 @@ blocks can be used to represent fields of static size. When you declare
 a block, you need to provide the size, and optionally a value. If you 
 don't provide any value, its contents shall be randomized:
 
-<pre><code>
+```
 # defines a 4-bytes block, the contents will be random
 block<4>; 
 # using a specific value
@@ -122,14 +130,14 @@ block<1> foo;
 block<4> = foo * 15 + 1;
 # you use a string as well
 block<7> = "HELLO\xde\xad";
-</code></pre>
+```
 
 ### var_block ###
 
 var_blocks contain a variable amount of data. The minimum and maximum 
 amount of data must be provided on their definition:
 
-<pre><code>
+```
 # will contain between 0 and 5 bytes
 var_block<0, 5>;
  
@@ -138,19 +146,19 @@ var_block<5, 10> foo = 0;
  
 # use the size of the field
 block<4> = size(foo);
-</code></pre>
+```
 
 ### str_block ###
 
 str_blocks are just blocks that must be initialized with a string value. 
 The length of the block will be equal to the length of the string:
 
-<pre><code>
+```
 # will be a 4 byte block
 str_block = "beef";
 # 6 bytes
 str_block = "hi\xff\x08ho";
-</code></pre>
+```
 
 ### multi_bit and bitfield ###
 
@@ -158,7 +166,7 @@ multi_bit blocks are just wrappers over several bitfields. bitfields
 represent fields which contain bits instead of bytes. bitfields can be 
 assigned a value or expression:
 
-<pre><code>
+```
 # wrapper over the inner bitfields
 multi_bit {
     bitfield<2> = 0;
@@ -174,14 +182,14 @@ multi_bit something {
 };
  
 block<16> = md5(something);
-</code></pre>
+```
 
 ### multi_block ###
 
 multi_blocks are very similar to multi_bit fields. The main difference
 is that they hold regular fields, rather than only bitfields.
 
-<pre><code>
+```
 # some fields
 multi_block my_big_block {
     block<4>;
@@ -191,7 +199,7 @@ multi_block my_big_block {
         bitfield<4> = 5;
     };
 };
-</code></pre>
+```
 
 
 ### templates ###
@@ -200,7 +208,7 @@ template blocks are very useful when you need to repetedly use a certain
 structure. templates are defined at the beginning of the file, and can 
 be instantiated at any point in them:
 
-<pre><code>
+```
 # our file begins with this definitions
 templates {
     # foo is a template
@@ -221,27 +229,27 @@ template<foo, 6, 8> bleh;
  
 # will hold 6, 7 or 8 depending on how many fields does bleh contain
 block<1> = count(bleh);
-</code></pre>
+```
 
 ### choice ###
 
 choices are fields that contain several fields, but only one of them 
 will be used in each file generation:
 
-<pre><code>
+```
 # can contain either 2 or 4 random bytes
 choice {
     block<4>;
     block<2>;
 };
-</code></pre>
+```
 
 ### functions ###
 
 There are some functions defined which allow you to initialize your 
 field values with some value that depends on other fields' values:
 
-<pre><code>
+```
 # some random block
 block<50> input;
 # crc
@@ -252,4 +260,4 @@ block<16> = md5(input);
 block<20> = sha1(input);
 # always 50
 block<2> = size(input);
-</code></pre>
+```
