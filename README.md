@@ -26,10 +26,13 @@ templates {
     segment {
         # the first byte will be 0xff
         block<1> = 0xff;
+        
         # the next byte will be randomized
         block<1>;
+        
         # the next 2-byte field will contain the size of the data field
         block<2> = size(data);
+        
         # the data field will contain 0 to 2000 random bytes
         var_block<0, 2000> data;
     };
@@ -37,11 +40,15 @@ templates {
 
 # JPG magic number
 str_block = "\xff\xd8\xff\xe0";
+
 block<2> = 16;
+
 # JFIF identifier
 str_block = "JFIF\x00\x01\x02";
+
 # units
 block<8> = 0; 
+
 # 0 to 200 segments, as defined above
 template<segment, 0, 200>; 
 ```
@@ -73,10 +80,13 @@ the template file to use:
 ```Shell
 # just as an example
 ./sloth -t /tmp/some_template_file some_application some_app_param1
+
 # fuzz mpg123, for example
 ./sloth -t templates/mp3 mpg123
+
 # you can also use parameters, "-2" here is a mpg123 parameter
 ./sloth -t templates/mp3 mpg123 -2
+
 # same as above, {%} indicates the place in which the name of the file
 # will be replaced. By default it's replaced at the end of the command
 ./sloth -t templates/mp3 mpg123 -2 {%}
@@ -118,16 +128,23 @@ don't provide any value, its contents shall be randomized:
 ```
 # defines a 4-bytes block, the contents will be random
 block<4>; 
+
 # using a specific value
 block<2> = 15;
+
 block<4> = 0xdeadbeef;
+
 # give it a name, and use some function over it
 block<50> md5_input;
+
 # will contain the MD5 hash of the contents of md5_input
 block<16> = md5(md5_input); 
+
 # expressions are allowed as well
 block<1> foo;
+
 block<4> = foo * 15 + 1;
+
 # you use a string as well
 block<7> = "HELLO\xde\xad";
 ```
@@ -156,6 +173,7 @@ The length of the block will be equal to the length of the string:
 ```
 # will be a 4 byte block
 str_block = "beef";
+
 # 6 bytes
 str_block = "hi\xff\x08ho";
 ```
@@ -171,6 +189,7 @@ assigned a value or expression:
 multi_bit {
     bitfield<2> = 0;
     bitfield<4> = 0xff;
+    
     # randomized
     bitfield<2>; 
 };
@@ -252,12 +271,16 @@ field values with some value that depends on other fields' values:
 ```
 # some random block
 block<50> input;
+
 # crc
 block<4> = crc32(input);
+
 # md5
 block<16> = md5(input);
+
 # sha1
 block<20> = sha1(input);
+
 # always 50
 block<2> = size(input);
 ```
